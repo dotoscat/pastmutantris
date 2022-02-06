@@ -40,3 +40,19 @@ bool mutantris::Panel::move(int x, int y) {
     }
     return true;
 }
+
+bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
+    if (x < 0 || x >= width || y < 0 || y >= height ||
+        x+mutantris::PIEZE_SIZE < 0 || x+mutantris::PIEZE_SIZE >= width ||
+        y+mutantris::PIEZE_SIZE < 0 || y+mutantris::PIEZE_SIZE >= height
+    ) {
+        return false;
+    }
+    //Copy
+    for (int iy = 0; iy < mutantris::PIEZE_SIZE; iy++) {
+        for (int ix = 0; ix < mutantris::PIEZE_SIZE; ix++) {
+            content[y+iy][x+ix] = piece[iy][ix];
+        }
+    }
+    return true;
+}

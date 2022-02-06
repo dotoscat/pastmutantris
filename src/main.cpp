@@ -91,7 +91,7 @@ int main(int argn, char* argv[]) {
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);
     panel.getContent()[1][1] = 1;
-    playerPanel.getContent()[3][3] = 1;
+    playerPanel.setPiece(3, 3, mutantris::I);
     while (running) {
         al_get_next_event(queue, &event);
         switch (event.type) {
@@ -111,6 +111,8 @@ int main(int argn, char* argv[]) {
         draw_grid();
         al_flip_display();
     }
+    std::cout << mutantris::I[0][0] << std::endl;
+    std::cout << mutantris::I[0][1] << std::endl;
     al_destroy_event_queue(queue);
     al_destroy_display(display);
     return 0;

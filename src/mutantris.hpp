@@ -8,7 +8,24 @@ namespace mutantris {
      * 0 -> Empty
      * n > 0 -> Not empty, numbers can be used for colors
      */
+    const int PIEZE_SIZE = 4;
+
     using Column = std::vector<int>;
+    using Piece = const int[PIEZE_SIZE][PIEZE_SIZE];
+
+    Piece I = {
+        {0, 1, 0, 0},
+        {0, 1, 0, 0},
+        {0, 1, 0, 0},
+        {0, 1, 0, 0},
+    };
+
+    Piece O = {
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {0, 1, 1, 0},
+        {0, 0, 0, 0},
+    };
 
     class Panel {
         int width, height;
@@ -19,6 +36,7 @@ namespace mutantris {
 
         std::vector<Column>& getContent();
         bool move(int x, int y);
+        bool setPiece(int x, int y, Piece& piece);
     };
 
 }

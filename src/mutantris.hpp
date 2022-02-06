@@ -11,11 +11,14 @@ namespace mutantris {
     using Column = std::vector<int>;
 
     class Panel {
+        int width, height;
         std::vector<Column> content;
+        std::vector<Column> next;
     public:
         Panel(const int width, const int height);
 
         std::vector<Column>& getContent();
+        bool move(int x, int y);
     };
 
 }

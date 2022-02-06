@@ -13,36 +13,19 @@ const float BLOCK_HEIGHT = 32.f;
 const int PANEL_WIDTH = 10;
 const int PANEL_HEIGHT = 10;
 
-struct PlayerPos {
-    int x, y;
-};
+const float PANEL_X = 64.f;
+const float PANEL_Y = 8.f;
+const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
+const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
 
-void draw_panel(mutantris::Panel &panel, PlayerPos &playerPos) {
+void draw_panel_background() {
+    static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
+    al_draw_rectangle(PANEL_X, PANEL_Y, PANEL_X+TOTAL_WIDTH, PANEL_Y+TOTAL_HEIGHT, BLACK, 1.f);
+}
+
+void draw_grid() {
     static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
     static const ALLEGRO_COLOR LIGHT_GREY = al_map_rgba(200, 200, 200, 255);
-    static const ALLEGRO_COLOR RED = al_map_rgba(255, 0, 0, 255);
-    static const float PANEL_X = 64.f;
-    static const float PANEL_Y = 8.f;
-    static const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
-    static const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
-    auto content = panel.getContent();
-    al_draw_rectangle(PANEL_X, PANEL_Y, PANEL_X+TOTAL_WIDTH, PANEL_Y+TOTAL_HEIGHT, BLACK, 1.f);
-    //draw grid
-    // draw blocks
-    for (int y = 0; y < PANEL_HEIGHT; y++) {
-        for (int x = 0; x < PANEL_WIDTH; x++) {
-            if (content[y][x] == 0) {
-                continue;
-            }
-            al_draw_filled_rectangle(PANEL_X+x*BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT,
-                                     PANEL_X+x*BLOCK_WIDTH+BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT+BLOCK_HEIGHT,
-                                     RED);
-        }
-    }
-    //draw player PlayerPos
-    al_draw_filled_rectangle(PANEL_X+playerPos.x*BLOCK_WIDTH, PANEL_Y+playerPos.y*BLOCK_HEIGHT,
-                                PANEL_X+playerPos.x*BLOCK_WIDTH+BLOCK_WIDTH, PANEL_Y+playerPos.y*BLOCK_HEIGHT+BLOCK_HEIGHT,
-                                BLACK);
     //draw horizontal lines
     for (float y = 1.f; y < PANEL_HEIGHT; y += 1.f) {
         al_draw_line(PANEL_X, PANEL_Y+y*BLOCK_HEIGHT,
@@ -58,15 +41,32 @@ void draw_panel(mutantris::Panel &panel, PlayerPos &playerPos) {
     }
 }
 
-void player_input(ALLEGRO_EVENT &event, PlayerPos &pos) {
+void draw_panel(mutantris::Panel &panel) {
+    static const ALLEGRO_COLOR RED = al_map_rgba(255, 0, 0, 255);
+    auto content = panel.getContent();
+    //draw grid
+    // draw blocks
+    for (int y = 0; y < PANEL_HEIGHT; y++) {
+        for (int x = 0; x < PANEL_WIDTH; x++) {
+            if (content[y][x] == 0) {
+                continue;
+            }
+            al_draw_filled_rectangle(PANEL_X+x*BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT,
+                                     PANEL_X+x*BLOCK_WIDTH+BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT+BLOCK_HEIGHT,
+                                     RED);
+        }
+    }
+}
+
+void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel) {
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
                 case ALLEGRO_KEY_A:
-                    pos.x -= 1;
+                    panel.move(-1, 0);
                     break;
                 case ALLEGRO_KEY_D:
-                    pos.x += 1;
+                    panel.move(1, 0);
                     break;
             }
     }
@@ -89,8 +89,9 @@ int main(int argn, char* argv[]) {
     ALLEGRO_COLOR bgcolor = al_map_rgba(250, 250, 250, 0);
     bool running = true;
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
-    PlayerPos playerPos = {7, 7};
+    mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);
     panel.getContent()[1][1] = 1;
+    playerPanel.getContent()[3][3] = 1;
     while (running) {
         al_get_next_event(queue, &event);
         switch (event.type) {
@@ -102,9 +103,12 @@ int main(int argn, char* argv[]) {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
         }
-        player_input(event, playerPos);
+        player_input(event, playerPanel);
         al_clear_to_color(bgcolor);
-        draw_panel(panel, playerPos);
+        draw_panel_background();
+        draw_panel(panel);
+        draw_panel(playerPanel);
+        draw_grid();
         al_flip_display();
     }
     al_destroy_event_queue(queue);

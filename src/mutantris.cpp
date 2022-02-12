@@ -1,5 +1,13 @@
 #include "mutantris.hpp"
 
+void mutantris::Panel::clearNext() {
+    for (auto &row : next) {
+        for(auto &c : row) {
+            c = 0;
+        }
+    }
+}
+
 mutantris::Panel::Panel(const int width, const int height) {
     for(int y = 0; y < height; y++) {
         mutantris::Column column(width, 0);
@@ -35,9 +43,9 @@ bool mutantris::Panel::move(int x, int y) {
     for (int py = 0; py < height; py++) {
         for(int px = 0; px < width; px++) {
             content[py][px] = next[py][px];
-            next[py][px] = 0;
         }
     }
+    clearNext();
     return true;
 }
 

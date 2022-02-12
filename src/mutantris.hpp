@@ -31,6 +31,9 @@ namespace mutantris {
         int width, height;
         std::vector<Column> content;
         std::vector<Column> next;
+
+        void clearNext();
+
     public:
         Panel(const int width, const int height);
 

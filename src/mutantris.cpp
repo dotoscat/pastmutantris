@@ -1,8 +1,8 @@
 #include <cmath>
 #include "mutantris.hpp"
 
-void mutantris::Panel::clearNext() {
-    for (auto &row : next) {
+void mutantris::Panel::clearMatrix(std::vector<Column> &matrix) {
+    for (auto &row : matrix) {
         for(auto &c : row) {
             c = 0;
         }
@@ -12,7 +12,7 @@ void mutantris::Panel::clearNext() {
 void mutantris::Panel::copyNextToContent() {
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-            content[y][x] = next[y][x]
+            content[y][x] = next[y][x];
         }
     }
 }
@@ -49,12 +49,8 @@ bool mutantris::Panel::move(int x, int y) {
             next[final_y][final_x] = content[py][px];
         }
     }
-    for (int py = 0; py < height; py++) {
-        for(int px = 0; px < width; px++) {
-            content[py][px] = next[py][px];
-        }
-    }
-    clearNext();
+    copyNextToContent();
+    clearMatrix(next);
     return true;
 }
 
@@ -75,7 +71,7 @@ bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
 }
 
 bool mutantris::Panel::rotate(float angle, int x, int y){
-    clearNext();
+    clearMatrix(next);
     for(int py = 0; py < height; py++){
         for(int px = 0; px < width; px++){
             if (content[py][px] == 0) {
@@ -86,7 +82,7 @@ bool mutantris::Panel::rotate(float angle, int x, int y){
             if (fx < 0 || fx >= width || fy < 0 || fy >= height) {
                 return false;
             }
-            next
+            //next
         }
     }
     return true;

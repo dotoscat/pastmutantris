@@ -32,7 +32,7 @@ namespace mutantris {
         std::vector<Column> content;
         std::vector<Column> next;
 
-        void clearNext();
+        void clearMatrix(std::vector<Column> &matrix);
         void copyNextToContent();
 
     public:

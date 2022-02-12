@@ -1,9 +1,18 @@
+#include <cmath>
 #include "mutantris.hpp"
 
 void mutantris::Panel::clearNext() {
     for (auto &row : next) {
         for(auto &c : row) {
             c = 0;
+        }
+    }
+}
+
+void mutantris::Panel::copyNextToContent() {
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            content[y][x] = next[y][x]
         }
     }
 }
@@ -60,6 +69,24 @@ bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
     for (int iy = 0; iy < mutantris::PIEZE_SIZE; iy++) {
         for (int ix = 0; ix < mutantris::PIEZE_SIZE; ix++) {
             content[y+iy][x+ix] = piece[iy][ix];
+        }
+    }
+    return true;
+}
+
+bool mutantris::Panel::rotate(float angle, int x, int y){
+    clearNext();
+    for(int py = 0; py < height; py++){
+        for(int px = 0; px < width; px++){
+            if (content[py][px] == 0) {
+                continue;
+            }
+            const int fx = x*cos(angle) - y*sin(angle);
+            const int fy = x*sin(angle) + y*cos(angle);
+            if (fx < 0 || fx >= width || fy < 0 || fy >= height) {
+                return false;
+            }
+            next
         }
     }
     return true;

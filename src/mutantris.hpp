@@ -33,6 +33,7 @@ namespace mutantris {
         std::vector<Column> next;
 
         void clearNext();
+        void copyNextToContent();
 
     public:
         Panel(const int width, const int height);
@@ -40,6 +41,7 @@ namespace mutantris {
         std::vector<Column>& getContent();
         bool move(int x, int y);
         bool setPiece(int x, int y, Piece& piece);
+        bool rotate(float angle, int x, int y);
     };
 
 }

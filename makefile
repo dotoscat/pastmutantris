@@ -5,5 +5,8 @@ SRC = src/*.cpp
 main:
 	g++ $(SRC) $(ALLEGRO5) -o main
 
+main-debug:
+	g++ -g $(SRC) $(ALLEGRO5) -o main-debug
+
 clean:
 	rm main

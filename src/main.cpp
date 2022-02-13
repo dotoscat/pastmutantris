@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <cmath>
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -10,13 +10,20 @@
 const float BLOCK_WIDTH = 32.f;
 const float BLOCK_HEIGHT = 32.f;
 
-const int PANEL_WIDTH = 10;
-const int PANEL_HEIGHT = 10;
+const int PANEL_WIDTH = 8;
+const int PANEL_HEIGHT = 8;
 
 const float PANEL_X = 64.f;
 const float PANEL_Y = 8.f;
 const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
 const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
+
+struct Position {
+    int x, y;
+
+    Position() : x(0), y(0) {}
+
+};
 
 void draw_panel_background() {
     static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
@@ -58,15 +65,23 @@ void draw_panel(mutantris::Panel &panel) {
     }
 }
 
-void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel) {
+void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &position) {
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
                 case ALLEGRO_KEY_A:
-                    panel.move(-1, 0);
+                    if (panel.move(-1, 0)) {
+                        position.x += -1;
+                    }
                     break;
                 case ALLEGRO_KEY_D:
-                    panel.move(1, 0);
+                    if (panel.move(1, 0)) {
+                        position.x += 1;
+                    }
+                    break;
+                case ALLEGRO_KEY_SPACE:
+                    auto done = panel.rotate(90*M_PI/180., position.x-1, position.y-1);
+                    std::cout << "rotated: " << done << std::endl;
                     break;
             }
     }
@@ -90,8 +105,11 @@ int main(int argn, char* argv[]) {
     bool running = true;
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);
-    panel.getContent()[1][1] = 1;
-    playerPanel.setPiece(3, 3, mutantris::I);
+    Position piecePosition;
+    //panel.getContent()[1][1] = 1;
+    piecePosition.x = 4;
+    piecePosition.y = 4;
+    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::I) << std::endl;
     while (running) {
         al_get_next_event(queue, &event);
         switch (event.type) {
@@ -103,7 +121,7 @@ int main(int argn, char* argv[]) {
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
         }
-        player_input(event, playerPanel);
+        player_input(event, playerPanel, piecePosition);
         al_clear_to_color(bgcolor);
         draw_panel_background();
         draw_panel(panel);
@@ -111,8 +129,6 @@ int main(int argn, char* argv[]) {
         draw_grid();
         al_flip_display();
     }
-    std::cout << mutantris::I[0][0] << std::endl;
-    std::cout << mutantris::I[0][1] << std::endl;
     al_destroy_event_queue(queue);
     al_destroy_display(display);
     return 0;

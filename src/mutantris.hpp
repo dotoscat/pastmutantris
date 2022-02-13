@@ -41,7 +41,7 @@ namespace mutantris {
         std::vector<Column>& getContent();
         bool move(int x, int y);
         bool setPiece(int x, int y, Piece& piece);
-        bool rotate(float angle, int x, int y);
+        bool rotate(float angle, int point_x, int point_y);
     };
 
 }

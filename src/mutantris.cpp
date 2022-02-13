@@ -1,4 +1,4 @@
-#include <cmath>
+#include <iostream>
 #include "mutantris.hpp"
 
 void mutantris::Panel::clearMatrix(std::vector<Column> &matrix) {
@@ -35,6 +35,7 @@ std::vector<mutantris::Column>& mutantris::Panel::getContent() {
  * Return true if movement is made, false if not
  */
 bool mutantris::Panel::move(int x, int y) {
+    clearMatrix(next);
     for (int py = 0; py < height; py++) {
         for(int px = 0; px < width; px++) {
             if (content[py][px] == 0) {
@@ -50,40 +51,42 @@ bool mutantris::Panel::move(int x, int y) {
         }
     }
     copyNextToContent();
-    clearMatrix(next);
     return true;
 }
 
 bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
-    if (x < 0 || x >= width || y < 0 || y >= height ||
-        x+mutantris::PIEZE_SIZE < 0 || x+mutantris::PIEZE_SIZE >= width ||
-        y+mutantris::PIEZE_SIZE < 0 || y+mutantris::PIEZE_SIZE >= height
+    if (x < 0  || y < 0
+        || x+mutantris::PIEZE_SIZE > width
+        || y+mutantris::PIEZE_SIZE > height
     ) {
         return false;
     }
     //Copy
     for (int iy = 0; iy < mutantris::PIEZE_SIZE; iy++) {
         for (int ix = 0; ix < mutantris::PIEZE_SIZE; ix++) {
-            content[y+iy][x+ix] = piece[iy][ix];
+            content[y+iy-PIEZE_SIZE/2][x+ix-PIEZE_SIZE/2] = piece[iy][ix];
         }
     }
     return true;
 }
 
-bool mutantris::Panel::rotate(float angle, int x, int y){
+bool mutantris::Panel::rotate(float angle, int point_x, int point_y){
     clearMatrix(next);
     for(int py = 0; py < height; py++){
         for(int px = 0; px < width; px++){
             if (content[py][px] == 0) {
                 continue;
             }
-            const int fx = x*cos(angle) - y*sin(angle);
-            const int fy = x*sin(angle) + y*cos(angle);
+            const int rotation_x = px - point_x;
+            const int rotation_y = py - point_y;
+            const int fx = -rotation_y + point_x;
+            const int fy = rotation_x + point_y;
             if (fx < 0 || fx >= width || fy < 0 || fy >= height) {
                 return false;
             }
-            //next
+            next[fy][fx] = content[py][px];
         }
     }
+    copyNextToContent();
     return true;
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include <cmath>
 
 #include <allegro5/allegro.h>
@@ -22,6 +23,41 @@ struct Position {
     int x, y;
 
     Position() : x(0), y(0) {}
+
+};
+
+class CurrentPiece {
+    static constexpr auto TOTAL_PIECES = 7;
+    static constexpr mutantris::Piece PIECES[] = {
+        **mutantris::I,
+        **mutantris::O,
+        **mutantris::T,
+        **mutantris::L,
+        **mutantris::IL,
+        **mutantris::S,
+        **mutantris::Z,
+    };
+
+    int current_piece;
+
+public:
+    CurrentPiece() : current_piece(0) {};
+
+    mutantris::Piece& next() {
+        current_piece++;
+        if (current_piece >= TOTAL_PIECES) {
+            current_piece = 0;
+        }
+        return PIECES[current_piece];
+    }
+
+    mutantris::Piece& before() {
+        current_piece--;
+        if (current_piece < 0) {
+            current_piece = TOTAL_PIECES-1;
+        }
+        return PIECES[current_piece];
+    }
 
 };
 
@@ -65,7 +101,7 @@ void draw_panel(mutantris::Panel &panel) {
     }
 }
 
-void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &position) {
+void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &position, CurrentPiece &current_piece) {
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
@@ -86,14 +122,17 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &posit
             }
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-            switch(event.mouse.button) {
-                case 1:
+                std::cout << "mouse button down" << std::endl;
+                if (event.mouse.button == 1) {
+                    mutantris::Piece &piece_next = current_piece.next();
+                    panel.setPiece(position.x, position.y, piece_next);
                     std::cout << "1" << std::endl;
-                    break;
-                case 2:
+                }
+                else if (event.mouse.button == 2) {
+                    mutantris::Piece &piece_before = current_piece.before();
+                    panel.setPiece(position.x, position.y, piece_before);
                     std::cout << "2" << std::endl;
-                    break;
-            }
+                }
             break;
     }
 
@@ -121,6 +160,7 @@ int main(int argn, char* argv[]) {
     Position piecePosition;
     piecePosition.x = 4;
     piecePosition.y = 4;
+    CurrentPiece current_piece;
     std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::S) << std::endl;
     while (running) {
         al_get_next_event(queue, &event);
@@ -134,7 +174,7 @@ int main(int argn, char* argv[]) {
                 running = false;
                 break;
         }
-        player_input(event, playerPanel, piecePosition);
+        player_input(event, playerPanel, piecePosition, current_piece);
         al_clear_to_color(bgcolor);
         draw_panel_background();
         draw_panel(panel);

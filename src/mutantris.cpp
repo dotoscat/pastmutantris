@@ -61,6 +61,7 @@ bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
     ) {
         return false;
     }
+    clearMatrix(content);
     //Copy
     for (int iy = 0; iy < mutantris::PIEZE_SIZE; iy++) {
         for (int ix = 0; ix < mutantris::PIEZE_SIZE; ix++) {

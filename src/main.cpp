@@ -119,7 +119,6 @@ int main(int argn, char* argv[]) {
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);
     Position piecePosition;
-    //panel.getContent()[1][1] = 1;
     piecePosition.x = 4;
     piecePosition.y = 4;
     std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::S) << std::endl;

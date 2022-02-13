@@ -84,6 +84,17 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &posit
                     std::cout << "rotated: " << done << std::endl;
                     break;
             }
+            break;
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            switch(event.mouse.button) {
+                case 1:
+                    std::cout << "1" << std::endl;
+                    break;
+                case 2:
+                    std::cout << "2" << std::endl;
+                    break;
+            }
+            break;
     }
 
 }
@@ -100,6 +111,8 @@ int main(int argn, char* argv[]) {
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_joystick_event_source());
+    al_register_event_source(queue, al_get_mouse_event_source());
+    al_register_event_source(queue, al_get_display_event_source(display));
     ALLEGRO_EVENT event;
     ALLEGRO_COLOR bgcolor = al_map_rgba(250, 250, 250, 0);
     bool running = true;
@@ -120,6 +133,7 @@ int main(int argn, char* argv[]) {
                 break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
+                break;
         }
         player_input(event, playerPanel, piecePosition);
         al_clear_to_color(bgcolor);
@@ -131,5 +145,6 @@ int main(int argn, char* argv[]) {
     }
     al_destroy_event_queue(queue);
     al_destroy_display(display);
+    std::cout << "Bye!" << std::endl;
     return 0;
 }

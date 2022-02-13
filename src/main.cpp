@@ -109,7 +109,7 @@ int main(int argn, char* argv[]) {
     //panel.getContent()[1][1] = 1;
     piecePosition.x = 4;
     piecePosition.y = 4;
-    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::I) << std::endl;
+    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::S) << std::endl;
     while (running) {
         al_get_next_event(queue, &event);
         switch (event.type) {

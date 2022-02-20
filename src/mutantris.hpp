@@ -9,10 +9,10 @@ namespace mutantris {
      * 0 -> Empty
      * n > 0 -> Not empty, numbers can be used for colors
      */
-    const int PIEZE_SIZE = 4;
+    const int PIECE_SIZE = 4;
 
-    using Column = std::array<int, PIEZE_SIZE>;
-    using Piece = std::array<Column, PIEZE_SIZE>;
+    using Column = std::array<int, PIECE_SIZE>;
+    using Piece = std::array<Column, PIECE_SIZE>;
     using Matrix = std::vector<std::vector<int>>;
 
     constexpr Piece I = {

@@ -102,6 +102,7 @@ void draw_panel(mutantris::Panel &panel) {
 }
 
 void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &position, CurrentPiece &current_piece) {
+    static const int angle = 90*M_PI/180;
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
@@ -116,7 +117,7 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &posit
                     }
                     break;
                 case ALLEGRO_KEY_SPACE:
-                    auto done = panel.rotate(90*M_PI/180., position.x-1, position.y-1);
+                    auto done = panel.rotate(angle, position.x-1, position.y-1);
                     std::cout << "rotated: " << done << std::endl;
                     break;
             }
@@ -165,7 +166,7 @@ int main(int argn, char* argv[]) {
     piecePosition.x = 4;
     piecePosition.y = 4;
     CurrentPiece current_piece;
-    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::I) << std::endl;
+    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O) << std::endl;
     while (running) {
         al_get_next_event(queue, &event);
         switch (event.type) {

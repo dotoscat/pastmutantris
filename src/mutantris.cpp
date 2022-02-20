@@ -1,7 +1,7 @@
 #include <iostream>
 #include "mutantris.hpp"
 
-void mutantris::Panel::clearMatrix(std::vector<Column> &matrix) {
+void mutantris::Panel::clearMatrix(Matrix &matrix) {
     for (auto &row : matrix) {
         for(auto &c : row) {
             c = 0;
@@ -19,7 +19,7 @@ void mutantris::Panel::copyNextToContent() {
 
 mutantris::Panel::Panel(const int width, const int height) {
     for(int y = 0; y < height; y++) {
-        mutantris::Column column(width, 0);
+        std::vector<int> column(width, 0);
         content.push_back(column);
     }
     next = content;
@@ -27,7 +27,7 @@ mutantris::Panel::Panel(const int width, const int height) {
     this->height = height;
 }
 
-std::vector<mutantris::Column>& mutantris::Panel::getContent() {
+mutantris::Matrix& mutantris::Panel::getContent() {
     return content;
 }
 
@@ -54,7 +54,7 @@ bool mutantris::Panel::move(int x, int y) {
     return true;
 }
 
-bool mutantris::Panel::setPiece(int x, int y, Piece& piece) {
+bool mutantris::Panel::setPiece(int x, int y, const Piece& piece) {
     if (x < 0  || y < 0
         || x+mutantris::PIEZE_SIZE > width
         || y+mutantris::PIEZE_SIZE > height

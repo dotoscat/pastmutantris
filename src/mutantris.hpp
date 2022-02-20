@@ -1,6 +1,7 @@
 #ifndef _MUTANTRIS_H_
 #define _MUTANTRIS_H_
 
+#include <array>
 #include <vector>
 
 namespace mutantris {
@@ -10,62 +11,63 @@ namespace mutantris {
      */
     const int PIEZE_SIZE = 4;
 
-    using Column = std::vector<int>;
-    using Piece = const int[PIEZE_SIZE][PIEZE_SIZE];
+    using Column = std::array<int, PIEZE_SIZE>;
+    using Piece = std::array<Column, PIEZE_SIZE>;
+    using Matrix = std::vector<std::vector<int>>;
 
-    Piece I = {
-        {0, 1},
-        {0, 1},
-        {0, 1},
-        {0, 1},
+    constexpr Piece I = {
+        Column{0, 1},
+        Column{0, 1},
+        Column{0, 1},
+        Column{0, 1},
     };
 
-    Piece O = {
-        {1, 1},
-        {1, 1},
+    constexpr Piece O = {
+        Column{1, 1},
+        Column{1, 1},
     };
 
-    Piece T = {
-        {1, 1, 1},
-        {0, 1, 0},
+    constexpr Piece T = {
+        Column{1, 1, 1},
+        Column{0, 1, 0},
     };
 
-    Piece L = {
-        {0, 1, 0},
-        {0, 1, 0},
-        {0, 1, 1},
+    constexpr Piece L = {
+        Column{0, 1, 0},
+        Column{0, 1, 0},
+        Column{0, 1, 1},
     };
 
-    Piece IL = {
-        {0, 1},
-        {0, 1},
-        {1, 1},
+    constexpr Piece IL = {
+        Column{0, 1},
+        Column{0, 1},
+        Column{1, 1},
     };
 
-    Piece Z = {
-        {1, 1, 0},
-        {0, 1, 1},
+    constexpr Piece Z = {
+        Column{1, 1, 0},
+        Column{0, 1, 1},
     };
 
-    Piece S = {
-        {0, 1, 1},
-        {1, 1, 0},
+    constexpr Piece S = {
+        Column{0, 1, 1},
+        Column{1, 1, 0},
     };
 
     class Panel {
         int width, height;
-        std::vector<Column> content;
-        std::vector<Column> next;
+        Matrix content;
+        Matrix next;
 
-        void clearMatrix(std::vector<Column> &matrix);
+        void clearMatrix(Matrix &matrix);
         void copyNextToContent();
 
     public:
         Panel(const int width, const int height);
 
-        std::vector<Column>& getContent();
+        Matrix& getContent();
         bool move(int x, int y);
-        bool setPiece(int x, int y, Piece& piece);
+        bool setPiece(int x, int y, const Piece& piece);
         bool rotate(float angle, int point_x, int point_y);
     };
 

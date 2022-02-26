@@ -107,12 +107,12 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &posit
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
                 case ALLEGRO_KEY_A:
-                    if (panel.move(-1, 0)) {
+                    if (panel.move(-1, 0, panel)) {
                         position.x += -1;
                     }
                     break;
                 case ALLEGRO_KEY_D:
-                    if (panel.move(1, 0)) {
+                    if (panel.move(1, 0, panel)) {
                         position.x += 1;
                     }
                     break;
@@ -153,10 +153,12 @@ int main(int argn, char* argv[]) {
     //al_install_haptic();
     ALLEGRO_DISPLAY *display = al_create_display(800, 600);
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
+    ALLEGRO_TIMER *panel_tick = al_create_timer(1.);
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_joystick_event_source());
     al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_display_event_source(display));
+    al_register_event_source(queue, al_get_timer_event_source(panel_tick));
     ALLEGRO_EVENT event;
     ALLEGRO_COLOR bgcolor = al_map_rgba(250, 250, 250, 0);
     bool running = true;
@@ -167,19 +169,32 @@ int main(int argn, char* argv[]) {
     piecePosition.y = 4;
     CurrentPiece current_piece;
     std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O) << std::endl;
+    al_start_timer(panel_tick);
     while (running) {
-        al_get_next_event(queue, &event);
-        switch (event.type) {
-            case ALLEGRO_EVENT_KEY_DOWN:
-                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+        if (al_get_next_event(queue, &event) == true) {
+            switch (event.type) {
+                case ALLEGRO_EVENT_KEY_DOWN:
+                    if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+                        running = false;
+                    }
+                    break;
+                case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
-                }
-                break;
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                running = false;
-                break;
+                    break;
+                case ALLEGRO_EVENT_TIMER:
+                    if (event.timer.source == panel_tick) {
+                        if (playerPanel.move(0, 1, panel) == false ) {
+                            panel.addFrom(playerPanel);
+                            playerPanel.clear();
+                            piecePosition.x = 4;
+                            piecePosition.y = 4;
+                            playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O);
+                            std::cout << "clack! Next piece!" << std::endl;
+                        }
+                    }
+            }
+            player_input(event, playerPanel, piecePosition, current_piece);
         }
-        player_input(event, playerPanel, piecePosition, current_piece);
         al_clear_to_color(bgcolor);
         draw_panel_background();
         draw_panel(panel);
@@ -187,6 +202,7 @@ int main(int argn, char* argv[]) {
         draw_grid();
         al_flip_display();
     }
+    al_destroy_timer(panel_tick);
     al_destroy_event_queue(queue);
     al_destroy_display(display);
     std::cout << "Bye!" << std::endl;

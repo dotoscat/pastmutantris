@@ -34,7 +34,10 @@ mutantris::Matrix& mutantris::Panel::getContent() {
 /**
  * Return true if movement is made, false if not
  */
-bool mutantris::Panel::move(int x, int y) {
+bool mutantris::Panel::move(int x, int y, const mutantris::Panel &panel) {
+    if (&panel != this && panel.width != width || panel.height != height) {
+        return false;
+    }
     clearMatrix(next);
     for (int py = 0; py < height; py++) {
         for(int px = 0; px < width; px++) {
@@ -44,7 +47,8 @@ bool mutantris::Panel::move(int x, int y) {
             const int final_y = py + y;
             const int final_x = px + x;
             if (final_y < 0 || final_y >= height ||
-                final_x < 0 || final_x >= width) {
+                final_x < 0 || final_x >= width || //check collision against panel content
+                (&panel != this && panel.content[final_y][final_x] != 0)) {
                 return false;
             }
             next[final_y][final_x] = content[py][px];
@@ -92,4 +96,25 @@ bool mutantris::Panel::rotate(float angle, int point_x, int point_y){
     }
     copyNextToContent();
     return true;
+}
+
+bool mutantris::Panel::addFrom(mutantris::Panel &panel){
+    if (panel.width != width || panel.height != height) {
+        return false;
+    }
+    for (int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            auto panelContent = panel.getContent();
+            if (panelContent[y][x] == 0){
+                continue;
+            }
+            content[y][x] = panelContent[y][x];
+        }
+    }
+    return true;
+}
+
+void mutantris::Panel::clear() {
+    clearMatrix(content);
+    clearMatrix(next);
 }

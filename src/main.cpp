@@ -117,6 +117,10 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
                         position.x += 1;
                     }
                     break;
+                case ALLEGRO_KEY_S:
+                    while(panel.move(0, 1, background_panel) == true);
+                    std::cout << "Clack!" << std::endl;
+                    break;
                 case ALLEGRO_KEY_SPACE:
                     auto done = panel.rotate(angle, position.x-1, position.y-1);
                     std::cout << "rotated: " << done << std::endl;

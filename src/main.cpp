@@ -11,8 +11,8 @@
 const float BLOCK_WIDTH = 32.f;
 const float BLOCK_HEIGHT = 32.f;
 
-const int PANEL_WIDTH = 8;
-const int PANEL_HEIGHT = 8;
+const int PANEL_WIDTH = 10;
+const int PANEL_HEIGHT = 18;
 
 const float PANEL_X = 64.f;
 const float PANEL_Y = 8.f;
@@ -101,18 +101,19 @@ void draw_panel(mutantris::Panel &panel) {
     }
 }
 
-void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel, Position &position, CurrentPiece &current_piece) {
+void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
+                  mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece) {
     static const int angle = 90*M_PI/180;
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
             switch(event.keyboard.keycode) {
                 case ALLEGRO_KEY_A:
-                    if (panel.move(-1, 0, panel)) {
+                    if (panel.move(-1, 0, background_panel)) {
                         position.x += -1;
                     }
                     break;
                 case ALLEGRO_KEY_D:
-                    if (panel.move(1, 0, panel)) {
+                    if (panel.move(1, 0, background_panel)) {
                         position.x += 1;
                     }
                     break;
@@ -190,10 +191,12 @@ int main(int argn, char* argv[]) {
                             piecePosition.y = 4;
                             playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O);
                             std::cout << "clack! Next piece!" << std::endl;
+                        } else {
+                            piecePosition.y += 1;
                         }
                     }
             }
-            player_input(event, playerPanel, piecePosition, current_piece);
+            player_input(event, playerPanel, panel, piecePosition, current_piece);
         }
         al_clear_to_color(bgcolor);
         draw_panel_background();

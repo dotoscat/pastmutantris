@@ -59,7 +59,7 @@ bool mutantris::Panel::move(int x, int y, const mutantris::Panel &panel) {
 }
 
 bool mutantris::Panel::setPiece(int x, int y, const Piece& piece,
-                                const mutantris::Panel &background_panel) {
+                                const mutantris::Panel &background_panel, int value) {
     clearMatrix(next);
     //Copy
     for (int iy = 0; iy < mutantris::PIECE_SIZE; iy++) {
@@ -72,7 +72,7 @@ bool mutantris::Panel::setPiece(int x, int y, const Piece& piece,
             ) {
                 return false;
             }
-            next[final_y][final_x] = piece[iy][ix];
+            next[final_y][final_x] = piece[iy][ix] == 0 ? 0 : value;
         }
     }
     copyNextToContent();

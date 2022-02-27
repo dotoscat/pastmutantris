@@ -118,7 +118,9 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
                     }
                     break;
                 case ALLEGRO_KEY_S:
-                    while(panel.move(0, 1, background_panel) == true);
+                    while(panel.move(0, 1, background_panel) == true){
+                        position.y++;
+                    }
                     std::cout << "Clack!" << std::endl;
                     break;
                 case ALLEGRO_KEY_SPACE:

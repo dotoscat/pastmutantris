@@ -67,7 +67,7 @@ namespace mutantris {
 
         Matrix& getContent();
         bool move(int x, int y, const mutantris::Panel &);
-        bool setPiece(int x, int y, const Piece& piece);
+        bool setPiece(int x, int y, const Piece& piece, const Panel &);
         bool rotate(float angle, int point_x, int point_y);
         bool addFrom(mutantris::Panel &);
         void clear();

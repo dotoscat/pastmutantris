@@ -21,8 +21,8 @@ const float PANEL_Y = 8.f;
 const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
 const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
 
-int int1to3() {
-    return 1 + rand()%3;
+int int1to(const int max) {
+    return 1 + rand()%max;
 }
 
 struct Position {
@@ -136,19 +136,19 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
             }
             if (event.keyboard.keycode == ALLEGRO_KEY_R) {
                 mutantris::Piece piece_next = current_piece.next();
-                panel.setPiece(position.x, position.y, piece_next, background_panel, int1to3());
+                panel.setPiece(position.x, position.y, piece_next, background_panel, int1to(6));
             }
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 std::cout << "mouse button down" << std::endl;
                 if (event.mouse.button == 1) {
                     mutantris::Piece piece_next = current_piece.next();
-                    panel.setPiece(position.x, position.y, piece_next, background_panel, int1to3());
+                    panel.setPiece(position.x, position.y, piece_next, background_panel, int1to(6));
                     std::cout << "1" << std::endl;
                 }
                 else if (event.mouse.button == 2) {
                     mutantris::Piece piece_before = current_piece.before();
-                    panel.setPiece(position.x, position.y, piece_before, background_panel, int1to3());
+                    panel.setPiece(position.x, position.y, piece_before, background_panel, int1to(6));
                     std::cout << "2" << std::endl;
                 }
             break;
@@ -173,11 +173,14 @@ int main(int argn, char* argv[]) {
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(panel_tick));
     ALLEGRO_EVENT event;
-    ALLEGRO_COLOR bgcolor = al_map_rgba(250, 250, 250, 0);
+    ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
     std::map<int, ALLEGRO_COLOR> color {
-        {1, al_map_rgba(255, 0, 0, 255)},
-        {2, al_map_rgba(0, 255, 0, 255)},
-        {3, al_map_rgba(0, 0, 255, 255)}
+        {1, al_map_rgba(240, 128, 128, 255)},
+        {2, al_map_rgba(144, 238, 144, 255)},
+        {3, al_map_rgba(100, 149, 237, 255)},
+        {4, al_map_rgba(175, 238, 238, 255)},
+        {5, al_map_rgba(221, 160, 221, 255)},
+        {6, al_map_rgba(240, 230, 140, 255)},
     };
     bool running = true;
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
@@ -186,7 +189,7 @@ int main(int argn, char* argv[]) {
     piecePosition.x = 4;
     piecePosition.y = 4;
     CurrentPiece current_piece;
-    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to3()) << std::endl;
+    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to(6)) << std::endl;
     al_start_timer(panel_tick);
     while (running) {
         if (al_get_next_event(queue, &event) == true) {
@@ -208,7 +211,7 @@ int main(int argn, char* argv[]) {
                             piecePosition.y = 4;
                             const auto [ start_line, end_line ] = panel.checkLines();
                             std::cout << start_line << ", " << end_line << std::endl;
-                            playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to3());
+                            playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to(6));
                             std::cout << "clack! Next piece!" << std::endl;
                         } else {
                             piecePosition.y += 1;

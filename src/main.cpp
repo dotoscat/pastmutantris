@@ -177,8 +177,12 @@ int main(int argn, char* argv[]) {
                             playerPanel.clear();
                             piecePosition.x = 4;
                             piecePosition.y = 4;
-                            const auto [ start_line, end_line ] = panel.checkLines();
+                            auto lines = panel.checkLines();
+                            auto [ start_line, end_line ] = lines;
                             std::cout << start_line << ", " << end_line << std::endl;
+                            if (start_line != 0 and end_line != 0) {
+                                panel.clearLines(lines);
+                            }
                             playerPanel.setPiece(piecePosition.x, piecePosition.y, current_piece.randomize(), playerPanel, int1to(6));
                             std::cout << "clack! Next piece!" << std::endl;
                         } else {

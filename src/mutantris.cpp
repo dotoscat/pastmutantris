@@ -131,7 +131,6 @@ mutantris::Lines mutantris::Panel::checkLines() {
         }
         if (line && start == 0) {
             start = y;
-            // continue editing this
         } else if (start != 0 && !line) {
             end = y;
             return std::make_tuple(start, end);
@@ -142,4 +141,23 @@ mutantris::Lines mutantris::Panel::checkLines() {
         }
     }
     return std::make_tuple(start, end);
+}
+
+bool mutantris::Panel::clearLines(Lines lines) {
+    const auto [start, end] = lines;
+    if (start >=  height || start < 0
+        || end > height || end < 0
+    ) {
+        return false;
+    }
+    const int diff = end - start;
+    for (int y = end-1; y >= 0; y--) {
+        for (int x = 0; x < width; x++) {
+            if (y - diff < 0) {
+                return false;
+            }
+            content[y][x] = content[y-diff][x];
+        }
+    }
+    return true;
 }

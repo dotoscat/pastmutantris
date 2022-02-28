@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <tuple>
 
 namespace mutantris {
     /**
@@ -14,6 +15,7 @@ namespace mutantris {
     using Column = std::array<int, PIECE_SIZE>;
     using Piece = std::array<Column, PIECE_SIZE>;
     using Matrix = std::vector<std::vector<int>>;
+    using Lines = std::tuple<int, int>;
 
     constexpr Piece I = {
         Column{0, 1},
@@ -71,6 +73,8 @@ namespace mutantris {
         bool rotate(float angle, int point_x, int point_y);
         bool addFrom(mutantris::Panel &);
         void clear();
+        Lines checkLines();
+
     };
 
 }

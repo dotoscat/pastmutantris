@@ -206,6 +206,8 @@ int main(int argn, char* argv[]) {
                             playerPanel.clear();
                             piecePosition.x = 4;
                             piecePosition.y = 4;
+                            const auto [ start_line, end_line ] = panel.checkLines();
+                            std::cout << start_line << ", " << end_line << std::endl;
                             playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to3());
                             std::cout << "clack! Next piece!" << std::endl;
                         } else {

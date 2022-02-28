@@ -120,3 +120,26 @@ void mutantris::Panel::clear() {
     clearMatrix(content);
     clearMatrix(next);
 }
+
+mutantris::Lines mutantris::Panel::checkLines() {
+    int start = 0;
+    int end = 0;
+    for(int y = 0; y < height; y++) {
+        bool line = true;
+        for (int x = 0; x < width; x++) {
+            line = line && content[y][x] != 0;
+        }
+        if (line && start == 0) {
+            start = y;
+            // continue editing this
+        } else if (start != 0 && !line) {
+            end = y;
+            return std::make_tuple(start, end);
+        }
+        // What if the lines reach to the bottom?
+        if (start != 0 && y+1 == height) {
+            end = y+1;
+        }
+    }
+    return std::make_tuple(start, end);
+}

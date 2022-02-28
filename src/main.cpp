@@ -7,6 +7,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include "mutantris.hpp"
+#include "current_piece.hpp"
 // #include "purplege.hpp"
 // otgamefw
 // mutantris
@@ -29,41 +30,6 @@ struct Position {
     int x, y;
 
     Position() : x(0), y(0) {}
-
-};
-
-class CurrentPiece {
-    static constexpr auto TOTAL_PIECES = 7;
-    static constexpr std::array<mutantris::Piece, TOTAL_PIECES> PIECES = {
-        mutantris::I,
-        mutantris::O,
-        mutantris::T,
-        mutantris::L,
-        mutantris::IL,
-        mutantris::S,
-        mutantris::Z,
-    };
-
-    int current_piece;
-
-public:
-    CurrentPiece() : current_piece(0) {};
-
-    mutantris::Piece next() {
-        current_piece++;
-        if (current_piece >= TOTAL_PIECES) {
-            current_piece = 0;
-        }
-        return PIECES[current_piece];
-    }
-
-    mutantris::Piece before() {
-        current_piece--;
-        if (current_piece < 0) {
-            current_piece = TOTAL_PIECES-1;
-        }
-        return PIECES[current_piece];
-    }
 
 };
 
@@ -189,7 +155,9 @@ int main(int argn, char* argv[]) {
     piecePosition.x = 4;
     piecePosition.y = 4;
     CurrentPiece current_piece;
-    std::cout << "set piece: " << playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to(6)) << std::endl;
+    std::cout << "set piece: "
+    << playerPanel.setPiece(piecePosition.x, piecePosition.y,
+                            current_piece.randomize(), playerPanel, int1to(6)) << std::endl;
     al_start_timer(panel_tick);
     while (running) {
         if (al_get_next_event(queue, &event) == true) {
@@ -211,7 +179,7 @@ int main(int argn, char* argv[]) {
                             piecePosition.y = 4;
                             const auto [ start_line, end_line ] = panel.checkLines();
                             std::cout << start_line << ", " << end_line << std::endl;
-                            playerPanel.setPiece(piecePosition.x, piecePosition.y, mutantris::O, playerPanel, int1to(6));
+                            playerPanel.setPiece(piecePosition.x, piecePosition.y, current_piece.randomize(), playerPanel, int1to(6));
                             std::cout << "clack! Next piece!" << std::endl;
                         } else {
                             piecePosition.y += 1;

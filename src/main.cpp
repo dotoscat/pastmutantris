@@ -38,6 +38,11 @@ void draw_panel_background() {
     al_draw_rectangle(PANEL_X, PANEL_Y, PANEL_X+TOTAL_WIDTH, PANEL_Y+TOTAL_HEIGHT, BLACK, 1.f);
 }
 
+void reset_timer(ALLEGRO_TIMER *timer) {
+    al_stop_timer(timer);
+    al_start_timer(timer);
+}
+
 void draw_grid() {
     static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
     static const ALLEGRO_COLOR LIGHT_GREY = al_map_rgba(200, 200, 200, 255);
@@ -74,7 +79,7 @@ void draw_panel(mutantris::Panel &panel, std::map<int, ALLEGRO_COLOR> color) {
 }
 
 void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
-                  mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece) {
+                  mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece, ALLEGRO_TIMER *game_timer) {
     static const int angle = 90*M_PI/180;
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
@@ -93,6 +98,7 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
                     while(panel.move(0, 1, background_panel) == true){
                         position.y++;
                     }
+                    reset_timer(game_timer);
                     std::cout << "Clack!" << std::endl;
                     break;
                 case ALLEGRO_KEY_SPACE:
@@ -190,7 +196,7 @@ int main(int argn, char* argv[]) {
                         }
                     }
             }
-            player_input(event, playerPanel, panel, piecePosition, current_piece);
+            player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick);
         }
         al_clear_to_color(bgcolor);
         draw_panel_background();

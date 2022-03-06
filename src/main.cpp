@@ -8,6 +8,7 @@
 #include <allegro5/allegro_primitives.h>
 #include "mutantris.hpp"
 #include "current_piece.hpp"
+#include "panel_drawer.hpp"
 // #include "purplege.hpp"
 // otgamefw
 // mutantris
@@ -33,49 +34,9 @@ struct Position {
 
 };
 
-void draw_panel_background() {
-    static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
-    al_draw_rectangle(PANEL_X, PANEL_Y, PANEL_X+TOTAL_WIDTH, PANEL_Y+TOTAL_HEIGHT, BLACK, 1.f);
-}
-
 void reset_timer(ALLEGRO_TIMER *timer) {
     al_stop_timer(timer);
     al_start_timer(timer);
-}
-
-void draw_grid() {
-    static const ALLEGRO_COLOR BLACK = al_map_rgba(0, 0, 0, 255);
-    static const ALLEGRO_COLOR LIGHT_GREY = al_map_rgba(200, 200, 200, 255);
-    //draw horizontal lines
-    for (float y = 1.f; y < PANEL_HEIGHT; y += 1.f) {
-        al_draw_line(PANEL_X, PANEL_Y+y*BLOCK_HEIGHT,
-                     PANEL_X+TOTAL_WIDTH, PANEL_Y+y*BLOCK_HEIGHT,
-                     LIGHT_GREY, 1.f);
-    }
-    //draw vertical lines
-    for(float x = 1.f; x < PANEL_WIDTH; x += 1.f) {
-        al_draw_line(PANEL_X+x*BLOCK_WIDTH, PANEL_Y,
-                     PANEL_X+x*BLOCK_WIDTH, PANEL_Y+TOTAL_HEIGHT,
-                     LIGHT_GREY, 1.f);
-
-    }
-}
-
-void draw_panel(mutantris::Panel &panel, std::map<int, ALLEGRO_COLOR> color) {
-    static const ALLEGRO_COLOR RED = al_map_rgba(255, 0, 0, 255);
-    auto content = panel.getContent();
-    //draw grid
-    // draw blocks
-    for (int y = 0; y < PANEL_HEIGHT; y++) {
-        for (int x = 0; x < PANEL_WIDTH; x++) {
-            if (content[y][x] == 0) {
-                continue;
-            }
-            al_draw_filled_rectangle(PANEL_X+x*BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT,
-                                     PANEL_X+x*BLOCK_WIDTH+BLOCK_WIDTH, PANEL_Y+y*BLOCK_HEIGHT+BLOCK_HEIGHT,
-                                     color[content[y][x]]);
-        }
-    }
 }
 
 void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
@@ -157,6 +118,10 @@ int main(int argn, char* argv[]) {
     bool running = true;
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);
+    PanelDrawer panel_drawer(64.f, 8.f, 10, 18, 32.f,
+                             al_map_rgba(0, 0, 0, 128),
+                             al_map_rgba(255, 255, 255, 255),
+                             al_map_rgba(128, 128, 128, 255));
     Position piecePosition;
     piecePosition.x = 4;
     piecePosition.y = 4;
@@ -199,10 +164,7 @@ int main(int argn, char* argv[]) {
             player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick);
         }
         al_clear_to_color(bgcolor);
-        draw_panel_background();
-        draw_panel(panel, color);
-        draw_panel(playerPanel, color);
-        draw_grid();
+        panel_drawer.draw(panel.getContent(), playerPanel.getContent());
         al_flip_display();
     }
     al_destroy_timer(panel_tick);

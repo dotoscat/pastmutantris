@@ -107,14 +107,6 @@ int main(int argn, char* argv[]) {
     al_register_event_source(queue, al_get_timer_event_source(panel_tick));
     ALLEGRO_EVENT event;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
-    std::map<int, ALLEGRO_COLOR> color {
-        {1, al_map_rgba(240, 128, 128, 255)},
-        {2, al_map_rgba(144, 238, 144, 255)},
-        {3, al_map_rgba(100, 149, 237, 255)},
-        {4, al_map_rgba(175, 238, 238, 255)},
-        {5, al_map_rgba(221, 160, 221, 255)},
-        {6, al_map_rgba(240, 230, 140, 255)},
-    };
     bool running = true;
     mutantris::Panel panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel playerPanel(PANEL_WIDTH, PANEL_HEIGHT);

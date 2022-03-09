@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include <vector>
 #include <cmath>
 #include <cstdlib>
 #include <map>
@@ -22,6 +23,99 @@ const float PANEL_X = 64.f;
 const float PANEL_Y = 8.f;
 const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
 const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
+
+
+/**
+ * Events
+ *
+ * Game Over
+ * Pause
+ * Piece moves -> what piece
+ * Piece mutates -> what piece
+ * Piece rotates -> what piece
+ * Piece sets -> what piece?
+ * clear 1 line
+ * clear 2 lines
+ * clear 3 lines
+ * clear 4 lines
+ *
+ */
+struct Event {
+    enum Type{
+        PAUSE,
+        GAME_OVER,
+        PIECE_MOVES,
+        PIECE_DROPPED,
+        PIECE_ROTATES,
+        PIECE_MUTATES,
+        CLEAR_LINE,
+    } type;
+    enum Move {
+        LEFT,
+        RIGHT,
+        DROP
+    };
+    union {
+        mutantris::Piece piece;
+        int lines;
+        Move move;
+    };
+};
+
+class EventManager {
+    static constexpr int MAX_EVENTS = 8;
+    std::vector<Event> events;
+    int used;
+
+    public:
+        EventManager() : used(0) {
+            events.reserve(MAX_EVENTS);
+        }
+
+        constexpr bool empty() {
+            return used == 0;
+        }
+
+        bool nextEvent(Event &event){
+            if (empty()) {
+                return false;
+            }
+            event = events[used];
+            used--;
+            if (empty()) {
+                return false;
+            }
+            return true;
+        }
+
+        void addPieceEvent(Event::Type type, mutantris::Piece piece) {
+            if (used == MAX_EVENTS) {
+                return;
+            }
+            used++;
+            events[used].type = type;
+            events[used].piece = piece;
+        }
+
+        void addLineEvent(int lines) {
+            if (used == MAX_EVENTS) {
+                return;
+            }
+            used++;
+            events[used].type = Event::Type::CLEAR_LINE;
+            events[used].lines = lines;
+        }
+
+        void addMoveEvent(Event::Move move) {
+            if (used == MAX_EVENTS) {
+                return;
+            }
+            used++;
+            events[used].type = Event::Type::PIECE_MOVES;
+            events[used].move = move;
+        }
+
+};
 
 int int1to(const int max) {
     return 1 + rand()%max;
@@ -105,6 +199,8 @@ int main(int argn, char* argv[]) {
     al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(panel_tick));
+    EventManager manager;
+    Event game_event;
     ALLEGRO_EVENT event;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
     bool running = true;
@@ -154,6 +250,11 @@ int main(int argn, char* argv[]) {
                     }
             }
             player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick);
+            // game events
+            while(manager.nextEvent(game_event)) {
+                std::cout << "game event type: " << game_event.type << std::endl;
+            }
+
         }
         al_clear_to_color(bgcolor);
         panel_drawer.draw(panel.getContent(), playerPanel.getContent());

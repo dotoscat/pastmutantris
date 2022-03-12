@@ -41,7 +41,8 @@ void reset_timer(ALLEGRO_TIMER *timer) {
 }
 
 void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
-                  mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece, ALLEGRO_TIMER *game_timer) {
+                  mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece, ALLEGRO_TIMER *game_timer,
+                  EventManager &event_manager) {
     static const int angle = 90*M_PI/180;
     switch(event.type) {
         case ALLEGRO_EVENT_KEY_DOWN:
@@ -57,11 +58,7 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
                     }
                     break;
                 case ALLEGRO_KEY_S:
-                    while(panel.move(0, 1, background_panel) == true){
-                        position.y++;
-                    }
-                    reset_timer(game_timer);
-                    std::cout << "Clack!" << std::endl;
+                    event_manager.addEvent(Event::Type::PIECE_FAST_FALL);
                     break;
                 case ALLEGRO_KEY_SPACE:
                     auto done = panel.rotate(angle, position.x-1, position.y-1);
@@ -71,6 +68,12 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
             if (event.keyboard.keycode == ALLEGRO_KEY_R) {
                 mutantris::Piece piece_next = current_piece.next();
                 panel.setPiece(position.x, position.y, piece_next, background_panel, int1to(6));
+            }
+            break;
+        case ALLEGRO_EVENT_KEY_UP:
+            switch(event.keyboard.keycode) {
+                case ALLEGRO_KEY_S:
+                    event_manager.addEvent(Event::Type::PIECE_NORMAL_FALL);
             }
             break;
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
@@ -100,7 +103,9 @@ int main(int argn, char* argv[]) {
     //al_install_haptic();
     ALLEGRO_DISPLAY *display = al_create_display(800, 600);
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
-    ALLEGRO_TIMER *panel_tick = al_create_timer(1.);
+    const double DEFAULT_SPEED = 1.;
+    double current_speed = DEFAULT_SPEED;
+    ALLEGRO_TIMER *panel_tick = al_create_timer(current_speed);
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_joystick_event_source());
     al_register_event_source(queue, al_get_mouse_event_source());
@@ -156,10 +161,20 @@ int main(int argn, char* argv[]) {
                         }
                     }
             }
-            player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick);
+            player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick, manager);
             // game events
             while(manager.nextEvent(game_event)) {
                 std::cout << "game event type: " << game_event.type << std::endl;
+                switch(game_event.type) {
+                    case Event::Type::PIECE_FAST_FALL:
+                        al_set_timer_speed(panel_tick, current_speed/16.);
+                        reset_timer(panel_tick);
+                        break;
+                    case Event::Type::PIECE_NORMAL_FALL:
+                        al_set_timer_speed(panel_tick, current_speed);
+                        reset_timer(panel_tick);
+                        break;
+                }
             }
 
         }

@@ -14,10 +14,15 @@ bool EventManager::nextEvent(Event &event){
     }
     event = events[used];
     used--;
-    if (empty()) {
-        return false;
-    }
     return true;
+}
+
+void EventManager::addEvent(Event::Type type) {
+    if (used == MAX_EVENTS) {
+        return;
+    }
+    used++;
+    events[used].type = type;
 }
 
 void EventManager::addPieceEvent(Event::Type type, mutantris::Piece piece) {

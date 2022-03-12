@@ -21,6 +21,8 @@ struct Event {
         PAUSE,
         GAME_OVER,
         PIECE_MOVES,
+        PIECE_FAST_FALL,
+        PIECE_NORMAL_FALL,
         PIECE_DROPPED,
         PIECE_ROTATES,
         PIECE_MUTATES,
@@ -48,6 +50,7 @@ class EventManager {
         constexpr bool empty();
         bool nextEvent(Event &event);
 
+        void addEvent(Event::Type);
         void addPieceEvent(Event::Type type, mutantris::Piece piece);
         void addLineEvent(int lines);
         void addMoveEvent(Event::Move move);

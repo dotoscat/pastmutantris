@@ -20,6 +20,7 @@ struct Event {
     enum Type{
         PAUSE,
         GAME_OVER,
+        GAME_TICK,
         PIECE_MOVES,
         PIECE_FAST_FALL,
         PIECE_NORMAL_FALL,
@@ -41,7 +42,7 @@ struct Event {
 };
 
 class EventManager {
-    static constexpr int MAX_EVENTS = 8;
+    static constexpr int MAX_EVENTS = 16;
     std::vector<Event> events;
     int used;
 

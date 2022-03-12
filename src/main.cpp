@@ -126,6 +126,7 @@ int main(int argn, char* argv[]) {
     piecePosition.x = 4;
     piecePosition.y = 4;
     CurrentPiece current_piece;
+    std::cout << "sizeof event: " << sizeof(Event) << std::endl;
     std::cout << "set piece: "
     << playerPanel.setPiece(piecePosition.x, piecePosition.y,
                             current_piece.randomize(), playerPanel, int1to(6)) << std::endl;
@@ -143,6 +144,15 @@ int main(int argn, char* argv[]) {
                     break;
                 case ALLEGRO_EVENT_TIMER:
                     if (event.timer.source == panel_tick) {
+                        manager.addEvent(Event::Type::GAME_TICK);
+                    }
+            }
+            player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick, manager);
+            // game events
+            while(manager.nextEvent(game_event)) {
+                std::cout << "game event type: " << game_event.type << std::endl;
+                switch(game_event.type) {
+                    case Event::Type::GAME_TICK:
                         if (playerPanel.move(0, 1, panel) == false ) {
                             panel.addFrom(playerPanel);
                             playerPanel.clear();
@@ -159,13 +169,7 @@ int main(int argn, char* argv[]) {
                         } else {
                             piecePosition.y += 1;
                         }
-                    }
-            }
-            player_input(event, playerPanel, panel, piecePosition, current_piece, panel_tick, manager);
-            // game events
-            while(manager.nextEvent(game_event)) {
-                std::cout << "game event type: " << game_event.type << std::endl;
-                switch(game_event.type) {
+                        break;
                     case Event::Type::PIECE_FAST_FALL:
                         al_set_timer_speed(panel_tick, current_speed/16.);
                         reset_timer(panel_tick);
@@ -176,7 +180,6 @@ int main(int argn, char* argv[]) {
                         break;
                 }
             }
-
         }
         al_clear_to_color(bgcolor);
         panel_drawer.draw(panel.getContent(), playerPanel.getContent());

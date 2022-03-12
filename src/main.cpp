@@ -10,112 +10,19 @@
 #include "mutantris.hpp"
 #include "current_piece.hpp"
 #include "panel_drawer.hpp"
+#include "event_manager.hpp"
 // #include "purplege.hpp"
 // otgamefw
 // mutantris
-const float BLOCK_WIDTH = 32.f;
-const float BLOCK_HEIGHT = 32.f;
+const float BLOCK_SIZE = 32.f;
 
 const int PANEL_WIDTH = 10;
 const int PANEL_HEIGHT = 18;
 
 const float PANEL_X = 64.f;
 const float PANEL_Y = 8.f;
-const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_WIDTH;
-const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_HEIGHT;
-
-
-/**
- * Events
- *
- * Game Over
- * Pause
- * Piece moves -> what piece
- * Piece mutates -> what piece
- * Piece rotates -> what piece
- * Piece sets -> what piece?
- * clear 1 line
- * clear 2 lines
- * clear 3 lines
- * clear 4 lines
- *
- */
-struct Event {
-    enum Type{
-        PAUSE,
-        GAME_OVER,
-        PIECE_MOVES,
-        PIECE_DROPPED,
-        PIECE_ROTATES,
-        PIECE_MUTATES,
-        CLEAR_LINE,
-    } type;
-    enum Move {
-        LEFT,
-        RIGHT,
-        DROP
-    };
-    union {
-        mutantris::Piece piece;
-        int lines;
-        Move move;
-    };
-};
-
-class EventManager {
-    static constexpr int MAX_EVENTS = 8;
-    std::vector<Event> events;
-    int used;
-
-    public:
-        EventManager() : used(0) {
-            events.reserve(MAX_EVENTS);
-        }
-
-        constexpr bool empty() {
-            return used == 0;
-        }
-
-        bool nextEvent(Event &event){
-            if (empty()) {
-                return false;
-            }
-            event = events[used];
-            used--;
-            if (empty()) {
-                return false;
-            }
-            return true;
-        }
-
-        void addPieceEvent(Event::Type type, mutantris::Piece piece) {
-            if (used == MAX_EVENTS) {
-                return;
-            }
-            used++;
-            events[used].type = type;
-            events[used].piece = piece;
-        }
-
-        void addLineEvent(int lines) {
-            if (used == MAX_EVENTS) {
-                return;
-            }
-            used++;
-            events[used].type = Event::Type::CLEAR_LINE;
-            events[used].lines = lines;
-        }
-
-        void addMoveEvent(Event::Move move) {
-            if (used == MAX_EVENTS) {
-                return;
-            }
-            used++;
-            events[used].type = Event::Type::PIECE_MOVES;
-            events[used].move = move;
-        }
-
-};
+const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_SIZE;
+const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_SIZE;
 
 int int1to(const int max) {
     return 1 + rand()%max;

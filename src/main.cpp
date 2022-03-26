@@ -160,12 +160,7 @@ int main(int argn, char* argv[]) {
                             piecePosition.y = 4;
                             auto lines = panel.checkLines();
                             auto [ start_line, end_line ] = lines;
-                            std::cout << start_line << ", " << end_line << std::endl;
-                            if (start_line != 0 and end_line != 0) {
-                                panel.clearLines(lines);
-                            }
-                            playerPanel.setPiece(piecePosition.x, piecePosition.y, current_piece.randomize(), playerPanel, int1to(6));
-                            std::cout << "clack! Next piece!" << std::endl;
+                            manager.addLinesEvent(lines);
                         } else {
                             piecePosition.y += 1;
                         }
@@ -177,6 +172,13 @@ int main(int argn, char* argv[]) {
                     case Event::Type::PIECE_NORMAL_FALL:
                         al_set_timer_speed(panel_tick, current_speed);
                         reset_timer(panel_tick);
+                        break;
+                    case Event::Type::CLEAR_LINES:
+                        if (game_event.lines.start != 0 and game_event.lines.end != 0) {
+                            panel.clearLines(game_event.lines.start, game_event.lines.end);
+                        }
+                        playerPanel.setPiece(piecePosition.x, piecePosition.y, current_piece.randomize(), playerPanel, int1to(6));
+                        std::cout << "clack! Next piece!" << std::endl;
                         break;
                 }
             }

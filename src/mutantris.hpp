@@ -74,7 +74,7 @@ namespace mutantris {
         bool addFrom(mutantris::Panel &);
         void clear();
         Lines checkLines();
-        bool clearLines(Lines);
+        bool clearLines(int, int);
 
     };
 

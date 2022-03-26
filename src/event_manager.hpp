@@ -27,7 +27,7 @@ struct Event {
         PIECE_DROPPED,
         PIECE_ROTATES,
         PIECE_MUTATES,
-        CLEAR_LINE,
+        CLEAR_LINES,
     } type;
     enum Move {
         LEFT,
@@ -36,7 +36,7 @@ struct Event {
     };
     union {
         mutantris::Piece piece;
-        int lines;
+        struct{int start; int end;} lines;
         Move move;
     };
 };
@@ -53,6 +53,6 @@ class EventManager {
 
         void addEvent(Event::Type);
         void addPieceEvent(Event::Type type, mutantris::Piece piece);
-        void addLineEvent(int lines);
+        void addLinesEvent(mutantris::Lines lines);
         void addMoveEvent(Event::Move move);
 };

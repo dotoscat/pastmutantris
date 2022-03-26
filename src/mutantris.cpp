@@ -143,8 +143,7 @@ mutantris::Lines mutantris::Panel::checkLines() {
     return std::make_tuple(start, end);
 }
 
-bool mutantris::Panel::clearLines(Lines lines) {
-    const auto [start, end] = lines;
+bool mutantris::Panel::clearLines(int start, int end) {
     if (start >=  height || start < 0
         || end > height || end < 0
     ) {

@@ -1,3 +1,6 @@
+#ifndef _EVENT_MANAGER_HPP_
+#define _EVENT_MANAGER_HPP_
+
 #include <vector>
 #include "mutantris.hpp"
 
@@ -56,3 +59,5 @@ class EventManager {
         void addLinesEvent(mutantris::Lines lines);
         void addMoveEvent(Event::Move move);
 };
+
+#endif

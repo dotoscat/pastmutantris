@@ -78,18 +78,12 @@ void Game::input(bool &running) {
                     break;
                 case ALLEGRO_KEY_D:
                     event_manager.addMoveEvent(Event::Move::RIGHT);
-                    //if (panel.move(1, 0, background_panel)) {
-                    //    position.x += 1;
-                    //}
                     break;
                 case ALLEGRO_KEY_S:
                     event_manager.addEvent(Event::Type::PIECE_FAST_FALL);
                     break;
                 case ALLEGRO_KEY_SPACE:
                     event_manager.addEvent(Event::Type::PIECE_ROTATES);
-                    //if (panel.move(1, 0, background_panel)) {
-                    // auto done = panel.rotate(angle, position.x-1, position.y-1);
-                    // std::cout << "rotated: " << done << std::endl;
                     break;
                 }
                 if (event.keyboard.keycode == ALLEGRO_KEY_R) {
@@ -98,13 +92,18 @@ void Game::input(bool &running) {
                     //panel.setPiece(position.x, position.y, piece_next, background_panel, int1to(6));
                 }
                 break;
+            case ALLEGRO_EVENT_KEY_UP:
+                switch(event.keyboard.keycode) {
+                    case ALLEGRO_KEY_S:
+                        event_manager.addEvent(Event::Type::PIECE_NORMAL_FALL);
+                        break;
+                }
+            break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
                 break;
             case ALLEGRO_EVENT_TIMER:
-                std::cerr << "EVENT_TIMER" << std::endl;
                 if (event.timer.source == panel_tick) {
-                    std::cerr << "YES" << std::endl;
                     event_manager.addEvent(Event::Type::GAME_TICK);
                 }
                 break;
@@ -114,6 +113,7 @@ void Game::input(bool &running) {
 }
 
 void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel) {
+    static const int angle = 90*M_PI/180;
     Event game_event;
     while(event_manager.nextEvent(game_event)) {
         std::cout << "game event type: " << game_event.type << std::endl;
@@ -141,6 +141,20 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 }
             }
             break;
+            case Event::Type::PIECE_ROTATES:
+            {
+                auto done = player_panel.rotate(angle, piece_position.x-1, piece_position.y-1);
+                std::cerr << "Piece rotates: " << done << std::endl;
+            }
+            break;
+            case Event::Type::PIECE_FAST_FALL:
+                al_set_timer_speed(panel_tick, current_speed/16.);
+                reset_timer(panel_tick);
+                break;
+            case Event::Type::PIECE_NORMAL_FALL:
+                al_set_timer_speed(panel_tick, current_speed);
+                reset_timer(panel_tick);
+                break;
         }
     }
 }

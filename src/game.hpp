@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
 #include "event_manager.hpp"
 #include "current_piece.hpp"
 
@@ -31,9 +33,11 @@ class Game {
     ALLEGRO_DISPLAY *display;
     ALLEGRO_EVENT_QUEUE *event_queue;
     ALLEGRO_TIMER *panel_tick;
+    ALLEGRO_FONT *general_font;
     EventManager event_manager;
     Position piece_position;
     CurrentPiece current_piece;
+    int points;
 
     void input(bool &);
     void process(mutantris::Panel &, mutantris::Panel &);

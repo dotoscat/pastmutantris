@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <array>
 #include <vector>
 #include <map>
@@ -11,7 +12,6 @@ int int1to(const int max) {
     return 1 + rand()%max;
 }
 
-
 void reset_timer(ALLEGRO_TIMER *timer) {
     al_stop_timer(timer);
     al_start_timer(timer);
@@ -22,6 +22,8 @@ Game::Game() {
     event_queue = al_create_event_queue();
     current_speed = DEFAULT_SPEED;
     panel_tick = al_create_timer(current_speed);
+    general_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 32, 0);
+    points = 0;
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
@@ -37,10 +39,12 @@ Game::~Game() {
     al_destroy_timer(panel_tick);
     al_destroy_event_queue(event_queue);
     al_destroy_display(display);
+    al_destroy_font(general_font);
 }
 
 void Game::run() {
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
+    ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
     bool running = true;
     mutantris::Panel game_panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel player_panel(PANEL_WIDTH, PANEL_HEIGHT);
@@ -50,6 +54,10 @@ void Game::run() {
                              al_map_rgba(128, 128, 128, 255));
     piece_position.x = 4;
     piece_position.y = 4;
+    const auto MAX_POINTS_STR = 16;
+    char points_str[MAX_POINTS_STR] = {0};
+
+    const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
 
     std::cout << player_panel.setPiece(piece_position.x, piece_position.y,
                             current_piece.randomize(), player_panel, int1to(6)) << std::endl;
@@ -59,6 +67,11 @@ void Game::run() {
         process(game_panel, player_panel);
         al_clear_to_color(bgcolor);
         panel_drawer.draw(game_panel.getContent(), player_panel.getContent());
+        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f, 0, "POINTS");
+
+        snprintf(points_str, MAX_POINTS_STR, "%d", points);
+        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+32.f+8.f, 0, static_cast<const char *>(points_str));
+
         al_flip_display();
 
     }
@@ -137,6 +150,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 player_panel.clear();
                 piece_position.x = 4;
                 piece_position.y = 4;
+                points++;
                 {
                     const auto [ lines, there_are_lines ] = game_panel.checkLines();
                     if (there_are_lines) {

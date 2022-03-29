@@ -120,17 +120,27 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
         switch(game_event.type) {
             case Event::Type::GAME_TICK:
             if (player_panel.move(0, 1, game_panel) == false ) {
-                game_panel.addFrom(player_panel);
-                player_panel.clear();
-                piece_position.x = 4;
-                piece_position.y = 4;
-                auto lines = game_panel.checkLines();
-                // auto [ start_line, end_line ] = lines;
-                event_manager.addLinesEvent(lines);
+                event_manager.addEvent(Event::Type::PIECE_DROPPED);
             } else {
                 piece_position.y += 1;
             }
             break;
+            case Event::Type::PIECE_DROPPED:
+                game_panel.addFrom(player_panel);
+                player_panel.clear();
+                piece_position.x = 4;
+                piece_position.y = 4;
+                {
+                    const auto [ lines, there_are_lines ] = game_panel.checkLines();
+                    if (there_are_lines) {
+                        event_manager.addLinesEvent(lines);
+                    }
+                }
+                player_panel.setPiece(piece_position.x, piece_position.y, current_piece.randomize(), player_panel, int1to(6));
+                break;
+            case Event::Type::CLEAR_LINES:
+                game_panel.clearLines(game_event.lines.start, game_event.lines.end);
+                break;
             case Event::Type::PIECE_MOVES:
             {
                 const auto direction =

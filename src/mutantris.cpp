@@ -121,7 +121,7 @@ void mutantris::Panel::clear() {
     clearMatrix(next);
 }
 
-mutantris::Lines mutantris::Panel::checkLines() {
+std::tuple<mutantris::Lines, bool> mutantris::Panel::checkLines() {
     int start = 0;
     int end = 0;
     for(int y = 0; y < height; y++) {
@@ -133,14 +133,15 @@ mutantris::Lines mutantris::Panel::checkLines() {
             start = y;
         } else if (start != 0 && !line) {
             end = y;
-            return std::make_tuple(start, end);
+            goto return_tuple;
         }
         // What if the lines reach to the bottom?
         if (start != 0 && y+1 == height) {
             end = y+1;
         }
     }
-    return std::make_tuple(start, end);
+    return_tuple:
+    return std::make_tuple(std::make_tuple(start, end), end != 0);
 }
 
 bool mutantris::Panel::clearLines(int start, int end) {

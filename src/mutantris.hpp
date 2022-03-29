@@ -73,7 +73,7 @@ namespace mutantris {
         bool rotate(float angle, int point_x, int point_y);
         bool addFrom(mutantris::Panel &);
         void clear();
-        Lines checkLines();
+        std::tuple<Lines, bool> checkLines();
         bool clearLines(int, int);
 
     };

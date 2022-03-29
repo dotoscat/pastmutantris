@@ -69,10 +69,10 @@ void Game::input(bool &running) {
     while(al_get_next_event(event_queue, &event) == true) {
         switch (event.type) {
             case ALLEGRO_EVENT_KEY_DOWN:
-                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
-                    running = false;
-                }
                 switch(event.keyboard.keycode) {
+                case ALLEGRO_KEY_ESCAPE:
+                    running = false;
+                    break;
                 case ALLEGRO_KEY_A:
                     event_manager.addMoveEvent(Event::Move::LEFT);
                     break;
@@ -85,18 +85,25 @@ void Game::input(bool &running) {
                 case ALLEGRO_KEY_SPACE:
                     event_manager.addEvent(Event::Type::PIECE_ROTATES);
                     break;
-                }
-                if (event.keyboard.keycode == ALLEGRO_KEY_R) {
+                case ALLEGRO_KEY_R:
                     event_manager.addEvent(Event::Type::PIECE_MUTATES);
-                    //mutantris::Piece piece_next = current_piece.next();
-                    //panel.setPiece(position.x, position.y, piece_next, background_panel, int1to(6));
+                    break;
                 }
-                break;
             case ALLEGRO_EVENT_KEY_UP:
                 switch(event.keyboard.keycode) {
                     case ALLEGRO_KEY_S:
                         event_manager.addEvent(Event::Type::PIECE_NORMAL_FALL);
                         break;
+                }
+            break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                if (event.mouse.button == 1) {
+                    event_manager.addEvent(Event::Type::PIECE_NEXT_MUTATION);
+                    std::cout << "1" << std::endl;
+                }
+                else if (event.mouse.button == 2) {
+                    event_manager.addEvent(Event::Type::PIECE_LAST_MUTATION);
+                    std::cout << "2" << std::endl;
                 }
             break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -157,6 +164,24 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 std::cerr << "Piece rotates: " << done << std::endl;
             }
             break;
+            case Event::Type::PIECE_MUTATES:
+            {
+                mutantris::Piece piece_next = current_piece.next();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece_next, game_panel, int1to(6));
+            }
+                break;
+            case Event::Type::PIECE_NEXT_MUTATION:
+            {
+                mutantris::Piece piece_next = current_piece.next();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece_next, game_panel, int1to(6));
+            }
+                break;
+            case Event::Type::PIECE_LAST_MUTATION:
+            {
+                mutantris::Piece piece_before = current_piece.before();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece_before, game_panel, int1to(6));
+            }
+                break;
             case Event::Type::PIECE_FAST_FALL:
                 al_set_timer_speed(panel_tick, current_speed/16.);
                 reset_timer(panel_tick);

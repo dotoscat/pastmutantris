@@ -30,6 +30,8 @@ struct Event {
         PIECE_DROPPED,
         PIECE_ROTATES,
         PIECE_MUTATES,
+        PIECE_NEXT_MUTATION,
+        PIECE_LAST_MUTATION,
         CLEAR_LINES,
     } type;
     enum Move {

@@ -1,45 +1,9 @@
 #include <iostream>
-#include <array>
-#include <vector>
-#include <cmath>
-#include <cstdlib>
-#include <map>
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
-#include "mutantris.hpp"
-#include "current_piece.hpp"
-#include "panel_drawer.hpp"
-#include "event_manager.hpp"
-// #include "purplege.hpp"
-// otgamefw
-// mutantris
-const float BLOCK_SIZE = 32.f;
+#include "game.hpp"
 
-const int PANEL_WIDTH = 10;
-const int PANEL_HEIGHT = 18;
-
-const float PANEL_X = 64.f;
-const float PANEL_Y = 8.f;
-const float TOTAL_WIDTH = PANEL_WIDTH*BLOCK_SIZE;
-const float TOTAL_HEIGHT = PANEL_HEIGHT*BLOCK_SIZE;
-
-int int1to(const int max) {
-    return 1 + rand()%max;
-}
-
-struct Position {
-    int x, y;
-
-    Position() : x(0), y(0) {}
-
-};
-
-void reset_timer(ALLEGRO_TIMER *timer) {
-    al_stop_timer(timer);
-    al_start_timer(timer);
-}
-
+/*
 void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
                   mutantris::Panel &background_panel, Position &position, CurrentPiece &current_piece, ALLEGRO_TIMER *game_timer,
                   EventManager &event_manager) {
@@ -92,6 +56,7 @@ void player_input(ALLEGRO_EVENT &event, mutantris::Panel &panel,
     }
 
 }
+*/
 
 int main(int argn, char* argv[]) {
     std::cout << "Starting this" << std::endl;
@@ -100,6 +65,9 @@ int main(int argn, char* argv[]) {
     al_install_keyboard();
     al_install_mouse();
     al_install_joystick();
+    Game game;
+    game.run();
+    /*
     //al_install_haptic();
     ALLEGRO_DISPLAY *display = al_create_display(800, 600);
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
@@ -191,5 +159,5 @@ int main(int argn, char* argv[]) {
     al_destroy_event_queue(queue);
     al_destroy_display(display);
     std::cout << "Bye!" << std::endl;
-    return 0;
+    return 0;*/
 }

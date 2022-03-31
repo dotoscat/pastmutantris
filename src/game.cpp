@@ -66,6 +66,7 @@ void Game::run() {
         input(running);
         process(game_panel, player_panel);
         al_clear_to_color(bgcolor);
+
         panel_drawer.draw(game_panel.getContent(), player_panel.getContent());
         al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f, 0, "POINTS");
 
@@ -160,6 +161,11 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 player_panel.setPiece(piece_position.x, piece_position.y, current_piece.randomize(), player_panel, int1to(6));
                 break;
             case Event::Type::CLEAR_LINES:
+            {
+                const auto total_lines = game_event.lines.end - game_event.lines.start;
+                std::cerr << "lines cleared: " << total_lines << std::endl;
+                points += total_lines*total_lines;
+            }
                 game_panel.clearLines(game_event.lines.start, game_event.lines.end);
                 break;
             case Event::Type::PIECE_MOVES:

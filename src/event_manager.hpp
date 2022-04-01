@@ -41,7 +41,10 @@ struct Event {
     };
     union {
         mutantris::Piece piece;
-        struct{int start; int end;} lines;
+        struct{
+            mutantris::Lines lines;
+            int cleared;
+        } lines;
         Move move;
     };
 };
@@ -58,7 +61,7 @@ class EventManager {
 
         void addEvent(Event::Type);
         void addPieceEvent(Event::Type type, mutantris::Piece piece);
-        void addLinesEvent(mutantris::Lines lines);
+        void addLinesEvent(mutantris::Lines lines, int lines_clared);
         void addMoveEvent(Event::Move move);
 };
 

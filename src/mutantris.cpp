@@ -25,6 +25,7 @@ mutantris::Panel::Panel(const int width, const int height) {
     next = content;
     this->width = width;
     this->height = height;
+    lines = {0};
 }
 
 mutantris::Matrix& mutantris::Panel::getContent() {
@@ -121,43 +122,38 @@ void mutantris::Panel::clear() {
     clearMatrix(next);
 }
 
-std::tuple<mutantris::Lines, bool> mutantris::Panel::checkLines() {
-    int start = 0;
-    int end = 0;
+std::tuple<mutantris::Lines, int> mutantris::Panel::checkLines() {
+    int lines_i = 0;
+    bool there_are_lines = false;
     for(int y = 0; y < height; y++) {
-        bool line = true;
-        for (int x = 0; x < width; x++) {
-            line = line && content[y][x] != 0;
+        bool completed = true;
+        for (auto x : content[y]) {
+           completed = completed && x != 0;
         }
-        if (line && start == 0) {
-            start = y;
-        } else if (start != 0 && !line) {
-            end = y;
-            goto return_tuple;
-        }
-        // What if the lines reach to the bottom?
-        if (start != 0 && y+1 == height) {
-            end = y+1;
+        if (completed && lines_i < 4) {
+            lines[lines_i] = y;
+            lines_i++;
+            there_are_lines = true;
         }
     }
-    return_tuple:
-    return std::make_tuple(std::make_tuple(start, end), end != 0);
+    const auto number_of_lines = there_are_lines ? lines_i + 1 : 0;
+    return std::make_tuple(lines, number_of_lines);
 }
 
-bool mutantris::Panel::clearLines(int start, int end) {
-    if (start >=  height || start < 0
-        || end > height || end < 0
-    ) {
-        return false;
-    }
-    const int diff = end - start;
-    for (int y = end-1; y >= 0; y--) {
-        for (int x = 0; x < width; x++) {
-            if (y - diff < 0) {
-                return false;
-            }
-            content[y][x] = content[y-diff][x];
+bool mutantris::Panel::clearLines() {
+    bool done = false;
+    for (int i = 0; i < 4; i++) {
+        if (lines[i] <= 0) {
+            continue;
         }
+        const int i_line = lines[i];
+        for(int y = i_line; y > 0; y--) {
+            for(int x = 0; x < width; x++) {
+                content[y][x] = content[y-1][x];
+            }
+        }
+        lines[i] = 0;
+        done = true;
     }
-    return true;
+    return done;
 }

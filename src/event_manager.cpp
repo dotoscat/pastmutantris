@@ -34,14 +34,14 @@ void EventManager::addPieceEvent(Event::Type type, mutantris::Piece piece) {
     events[used].piece = piece;
 }
 
-void EventManager::addLinesEvent(mutantris::Lines lines) {
+void EventManager::addLinesEvent(mutantris::Lines lines, int lines_cleared) {
     if (used == MAX_EVENTS) {
         return;
     }
     used++;
     events[used].type = Event::Type::CLEAR_LINES;
-    events[used].lines.start = std::get<0>(lines);
-    events[used].lines.end = std::get<1>(lines);
+    events[used].lines.lines = lines;
+    events[used].lines.cleared = lines_cleared;
 }
 
 void EventManager::addMoveEvent(Event::Move move) {

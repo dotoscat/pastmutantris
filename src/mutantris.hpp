@@ -15,7 +15,7 @@ namespace mutantris {
     using Column = std::array<int, PIECE_SIZE>;
     using Piece = std::array<Column, PIECE_SIZE>;
     using Matrix = std::vector<std::vector<int>>;
-    using Lines = std::tuple<int, int>;
+    using Lines = std::array<int, 4>;
 
     constexpr Piece I = {
         Column{0, 1},
@@ -60,6 +60,7 @@ namespace mutantris {
         int width, height;
         Matrix content;
         Matrix next;
+        Lines lines;
 
         void clearMatrix(Matrix &matrix);
         void copyNextToContent();
@@ -73,9 +74,8 @@ namespace mutantris {
         bool rotate(float angle, int point_x, int point_y);
         bool addFrom(mutantris::Panel &);
         void clear();
-        std::tuple<Lines, bool> checkLines();
-        bool clearLines(int, int);
-
+        std::tuple<Lines, int> checkLines();
+        bool clearLines();
     };
 
 }

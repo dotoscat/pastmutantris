@@ -153,20 +153,20 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 piece_position.y = 4;
                 points++;
                 {
-                    const auto [ lines, there_are_lines ] = game_panel.checkLines();
-                    if (there_are_lines) {
-                        event_manager.addLinesEvent(lines);
+                    const auto [ lines, completed_lines ] = game_panel.checkLines();
+                    if (completed_lines > 0) {
+                        event_manager.addLinesEvent(lines, completed_lines);
                     }
                 }
                 player_panel.setPiece(piece_position.x, piece_position.y, current_piece.randomize(), player_panel, int1to(6));
                 break;
             case Event::Type::CLEAR_LINES:
             {
-                const auto total_lines = game_event.lines.end - game_event.lines.start;
+                const auto total_lines = game_event.lines.cleared;
                 std::cerr << "lines cleared: " << total_lines << std::endl;
                 points += total_lines*total_lines;
             }
-                game_panel.clearLines(game_event.lines.start, game_event.lines.end);
+                game_panel.clearLines();
                 break;
             case Event::Type::PIECE_MOVES:
             {

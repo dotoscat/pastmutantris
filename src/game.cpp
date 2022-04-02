@@ -59,8 +59,11 @@ void Game::run() {
 
     const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
 
+    current_piece.randomize();
+    const auto piece = current_piece.getCurrentPiece();
+
     std::cout << player_panel.setPiece(piece_position.x, piece_position.y,
-                            current_piece.randomize(), player_panel, int1to(6)) << std::endl;
+                            piece, player_panel, int1to(6)) << std::endl;
     al_start_timer(panel_tick);
     while (running == true) {
         input(running);
@@ -157,8 +160,10 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                     if (completed_lines > 0) {
                         event_manager.addLinesEvent(lines, completed_lines);
                     }
+                    current_piece.randomize();
+                    auto piece = current_piece.getCurrentPiece();
+                    player_panel.setPiece(piece_position.x, piece_position.y, piece, player_panel, int1to(6));
                 }
-                player_panel.setPiece(piece_position.x, piece_position.y, current_piece.randomize(), player_panel, int1to(6));
                 break;
             case Event::Type::CLEAR_LINES:
             {
@@ -186,20 +191,23 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
             break;
             case Event::Type::PIECE_MUTATES:
             {
-                mutantris::Piece piece_next = current_piece.next();
-                player_panel.setPiece(piece_position.x, piece_position.y, piece_next, game_panel, int1to(6));
+                current_piece.next();
+                auto piece = current_piece.getCurrentPiece();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
             }
                 break;
             case Event::Type::PIECE_NEXT_MUTATION:
             {
-                mutantris::Piece piece_next = current_piece.next();
-                player_panel.setPiece(piece_position.x, piece_position.y, piece_next, game_panel, int1to(6));
+                current_piece.next();
+                auto piece = current_piece.getCurrentPiece();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
             }
                 break;
             case Event::Type::PIECE_LAST_MUTATION:
             {
-                mutantris::Piece piece_before = current_piece.before();
-                player_panel.setPiece(piece_position.x, piece_position.y, piece_before, game_panel, int1to(6));
+                current_piece.before();
+                auto piece = current_piece.getCurrentPiece();
+                player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
             }
                 break;
             case Event::Type::PIECE_FAST_FALL:

@@ -25,13 +25,13 @@ void EventManager::addEvent(Event::Type type) {
     events[used].type = type;
 }
 
-void EventManager::addPieceEvent(Event::Type type, mutantris::Piece piece) {
+void EventManager::addPieceEvent(Event::Type type, int index_piece) {
     if (used == MAX_EVENTS) {
         return;
     }
     used++;
     events[used].type = type;
-    events[used].piece = piece;
+    events[used].index_piece = index_piece;
 }
 
 void EventManager::addLinesEvent(mutantris::Lines lines, int lines_cleared) {

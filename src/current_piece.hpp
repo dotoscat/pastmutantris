@@ -21,9 +21,11 @@ class CurrentPiece {
 public:
     CurrentPiece() : current_piece(0) {};
 
-    mutantris::Piece next();
-    mutantris::Piece before();
-    mutantris::Piece randomize();
+    int getIndex();
+    mutantris::Piece getCurrentPiece();
+    int next();
+    int before();
+    int randomize();
 
 };
 

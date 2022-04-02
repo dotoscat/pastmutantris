@@ -40,7 +40,7 @@ struct Event {
         DROP
     };
     union {
-        mutantris::Piece piece;
+        int index_piece;
         struct{
             mutantris::Lines lines;
             int cleared;
@@ -60,7 +60,7 @@ class EventManager {
         bool nextEvent(Event &event);
 
         void addEvent(Event::Type);
-        void addPieceEvent(Event::Type type, mutantris::Piece piece);
+        void addPieceEvent(Event::Type type, int);
         void addLinesEvent(mutantris::Lines lines, int lines_clared);
         void addMoveEvent(Event::Move move);
 };

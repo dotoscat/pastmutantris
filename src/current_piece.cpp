@@ -5,6 +5,14 @@ int CurrentPiece::getIndex() {
     return current_piece;
 }
 
+bool CurrentPiece::setIndex(int index_piece) {
+    if (index_piece < 0 || index_piece >= TOTAL_PIECES) {
+        return false;
+    }
+    current_piece = index_piece;
+    return true;
+}
+
 mutantris::Piece CurrentPiece::getCurrentPiece() {
     return PIECES[current_piece];
 }

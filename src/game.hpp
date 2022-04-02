@@ -41,6 +41,7 @@ class Game {
 
     void input(bool &);
     void process(mutantris::Panel &, mutantris::Panel &);
+    void addNextPiece(mutantris::Panel &);
 
     public:
         Game();

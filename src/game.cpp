@@ -60,10 +60,8 @@ void Game::run() {
     const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
 
     current_piece.randomize();
-    const auto piece = current_piece.getCurrentPiece();
+    addNextPiece(player_panel);
 
-    std::cout << player_panel.setPiece(piece_position.x, piece_position.y,
-                            piece, player_panel, int1to(6)) << std::endl;
     al_start_timer(panel_tick);
     while (running == true) {
         input(running);
@@ -152,8 +150,6 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
             case Event::Type::PIECE_DROPPED:
                 game_panel.addFrom(player_panel);
                 player_panel.clear();
-                piece_position.x = 4;
-                piece_position.y = 4;
                 points++;
                 {
                     const auto [ lines, completed_lines ] = game_panel.checkLines();
@@ -161,8 +157,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                         event_manager.addLinesEvent(lines, completed_lines);
                     }
                     current_piece.randomize();
-                    auto piece = current_piece.getCurrentPiece();
-                    player_panel.setPiece(piece_position.x, piece_position.y, piece, player_panel, int1to(6));
+                    addNextPiece(player_panel);
                 }
                 break;
             case Event::Type::CLEAR_LINES:
@@ -220,4 +215,11 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                 break;
         }
     }
+}
+
+void Game::addNextPiece(mutantris::Panel &player_panel) {
+    auto piece = current_piece.getCurrentPiece();
+    piece_position.x = PANEL_WIDTH / 2;
+    piece_position.y = 2;
+    player_panel.setPiece(piece_position.x, piece_position.y, piece, player_panel, int1to(6));
 }

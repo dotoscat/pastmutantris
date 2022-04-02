@@ -22,6 +22,7 @@ public:
     CurrentPiece() : current_piece(0) {};
 
     int getIndex();
+    bool setIndex(int);
     mutantris::Piece getCurrentPiece();
     int next();
     int before();

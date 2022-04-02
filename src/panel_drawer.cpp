@@ -37,14 +37,8 @@ void PanelDrawer::draw_matrix(mutantris::Matrix &matrix) {
     }
 }
 
-void PanelDrawer::draw(mutantris::Matrix &matrix, mutantris::Matrix &second_matrix) {
-    // background color
-    al_draw_filled_rectangle(X, Y, X+WIDTH, Y+HEIGHT, bg_color);
-
-    draw_matrix(matrix);
-    draw_matrix(second_matrix);
-
-    //draw horizontal lines
+void PanelDrawer::draw_lines() {
+     //draw horizontal lines
     for (int y = 1; y < BLOCK_HEIGHT; y += 1) {
         al_draw_line(X, Y+y*BLOCK_SIZE,
                      X+WIDTH, Y+y*BLOCK_SIZE,
@@ -56,5 +50,20 @@ void PanelDrawer::draw(mutantris::Matrix &matrix, mutantris::Matrix &second_matr
                      X+x*BLOCK_SIZE, Y+HEIGHT,
                      grid_color, 1.f);
     }
+}
 
+void PanelDrawer::draw(mutantris::Matrix &matrix, mutantris::Matrix &second_matrix) {
+    // background color
+    al_draw_filled_rectangle(X, Y, X+WIDTH, Y+HEIGHT, bg_color);
+
+    draw_matrix(matrix);
+    draw_matrix(second_matrix);
+
+    draw_lines();
+}
+
+void PanelDrawer::draw_single(mutantris::Matrix &matrix) {
+    al_draw_filled_rectangle(X, Y, X+WIDTH, Y+HEIGHT, bg_color);
+    draw_matrix(matrix);
+    draw_lines();
 }

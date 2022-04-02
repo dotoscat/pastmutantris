@@ -26,6 +26,13 @@ struct Position {
 
 };
 
+struct NextPiece {
+    int index;
+    int value;
+
+    NextPiece() : index(0), value(0) {}
+};
+
 class Game {
 
     static constexpr double DEFAULT_SPEED = 1.;
@@ -37,11 +44,13 @@ class Game {
     EventManager event_manager;
     Position piece_position;
     CurrentPiece current_piece;
+    NextPiece next_piece;
+
     int points;
 
     void input(bool &);
-    void process(mutantris::Panel &, mutantris::Panel &);
-    void addNextPiece(mutantris::Panel &);
+    void process(mutantris::Panel &, mutantris::Panel &, mutantris::Panel &);
+    void addNextPiece(mutantris::Panel &, mutantris::Panel &);
 
     public:
         Game();

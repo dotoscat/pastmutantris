@@ -17,11 +17,13 @@ class PanelDrawer {
 
     static void init_colors();
     void draw_matrix(mutantris::Matrix &);
+    void draw_lines();
 
     public:
         PanelDrawer(float, float, int, int, float,
                     ALLEGRO_COLOR, ALLEGRO_COLOR, ALLEGRO_COLOR);
         void draw(mutantris::Matrix &, mutantris::Matrix &);
+        void draw_single(mutantris::Matrix &);
 
 };
 

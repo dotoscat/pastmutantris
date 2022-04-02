@@ -43,6 +43,8 @@ Game::~Game() {
 }
 
 void Game::run() {
+    const auto MAX_POINTS_STR = 16;
+    const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
     ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
     bool running = true;
@@ -52,20 +54,22 @@ void Game::run() {
                              al_map_rgba(0, 0, 0, 128),
                              al_map_rgba(255, 255, 255, 255),
                              al_map_rgba(128, 128, 128, 255));
-    piece_position.x = 4;
-    piece_position.y = 4;
-    const auto MAX_POINTS_STR = 16;
+
+    mutantris::Panel next_piece_panel(4, 4);
+    PanelDrawer next_piece_drawer(POINTS_STR_POS_X, 8.f+128.f+16.f, 4, 4, 32.f,
+                                al_map_rgba(0, 0, 0, 128),
+                                al_map_rgba(255, 255, 255, 255),
+                                al_map_rgba(128, 128, 128, 255));
+
     char points_str[MAX_POINTS_STR] = {0};
 
-    const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
-
     current_piece.randomize();
-    addNextPiece(player_panel);
+    addNextPiece(player_panel, next_piece_panel);
 
     al_start_timer(panel_tick);
     while (running == true) {
         input(running);
-        process(game_panel, player_panel);
+        process(game_panel, player_panel, next_piece_panel);
         al_clear_to_color(bgcolor);
 
         panel_drawer.draw(game_panel.getContent(), player_panel.getContent());
@@ -73,6 +77,9 @@ void Game::run() {
 
         snprintf(points_str, MAX_POINTS_STR, "%d", points);
         al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+32.f+8.f, 0, static_cast<const char *>(points_str));
+
+        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "NEXT");
+        next_piece_drawer.draw_single(next_piece_panel.getContent());
 
         al_flip_display();
 
@@ -134,7 +141,8 @@ void Game::input(bool &running) {
     }
 }
 
-void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel) {
+void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
+                   mutantris::Panel &next_piece_panel) {
     static const int angle = 90*M_PI/180;
     Event game_event;
     while(event_manager.nextEvent(game_event)) {
@@ -156,8 +164,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
                     if (completed_lines > 0) {
                         event_manager.addLinesEvent(lines, completed_lines);
                     }
-                    current_piece.randomize();
-                    addNextPiece(player_panel);
+                    addNextPiece(player_panel, next_piece_panel);
                 }
                 break;
             case Event::Type::CLEAR_LINES:
@@ -217,9 +224,14 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel)
     }
 }
 
-void Game::addNextPiece(mutantris::Panel &player_panel) {
+void Game::addNextPiece(mutantris::Panel &player_panel, mutantris::Panel &next_piece_panel) {
     auto piece = current_piece.getCurrentPiece();
     piece_position.x = PANEL_WIDTH / 2;
     piece_position.y = 2;
-    player_panel.setPiece(piece_position.x, piece_position.y, piece, player_panel, int1to(6));
+    const auto value = next_piece.value > 0 ? next_piece.value : int1to(6);
+    player_panel.setPiece(piece_position.x, piece_position.y, piece, player_panel, value);
+
+    next_piece.index = current_piece.randomize();
+    next_piece.value = int1to(6);
+    next_piece_panel.setPiece(2, 2, current_piece.getCurrentPiece(), next_piece_panel, next_piece.value);
 }

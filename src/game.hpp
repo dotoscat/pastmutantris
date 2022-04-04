@@ -35,6 +35,7 @@ struct NextPiece {
 
 class Game {
 
+    static constexpr double PERIOD_OF_GRACE = 1.;
     static constexpr double DEFAULT_SPEED = 1.;
     double current_speed;
     ALLEGRO_DISPLAY *display;
@@ -45,6 +46,7 @@ class Game {
     Position piece_position;
     CurrentPiece current_piece;
     NextPiece next_piece;
+    double period_of_grace;
 
     int points;
 

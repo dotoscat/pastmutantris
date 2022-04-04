@@ -24,6 +24,7 @@ Game::Game() {
     panel_tick = al_create_timer(current_speed);
     general_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 32, 0);
     points = 0;
+    period_of_grace = 0.;
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
@@ -149,6 +150,10 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
         std::cout << "game event type: " << game_event.type << std::endl;
         switch(game_event.type) {
             case Event::Type::GAME_TICK:
+            if (period_of_grace > 0.) {
+                period_of_grace -= current_speed;
+                break;
+            }
             if (player_panel.move(0, 1, game_panel) == false ) {
                 event_manager.addEvent(Event::Type::PIECE_DROPPED);
             } else {
@@ -176,6 +181,9 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 game_panel.clearLines();
                 break;
             case Event::Type::PIECE_MOVES:
+                if (period_of_grace > 0.) {
+                    break;
+                }
             {
                 const auto direction =
                     game_event.move == Event::Move::LEFT ? -1 :
@@ -196,6 +204,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 current_piece.next();
                 auto piece = current_piece.getCurrentPiece();
                 player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
+                period_of_grace = PERIOD_OF_GRACE;
             }
                 break;
             case Event::Type::PIECE_NEXT_MUTATION:
@@ -203,6 +212,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 current_piece.next();
                 auto piece = current_piece.getCurrentPiece();
                 player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
+                period_of_grace = PERIOD_OF_GRACE;
             }
                 break;
             case Event::Type::PIECE_LAST_MUTATION:
@@ -210,6 +220,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 current_piece.before();
                 auto piece = current_piece.getCurrentPiece();
                 player_panel.setPiece(piece_position.x, piece_position.y, piece, game_panel, int1to(6));
+                period_of_grace = PERIOD_OF_GRACE;
             }
                 break;
             case Event::Type::PIECE_FAST_FALL:

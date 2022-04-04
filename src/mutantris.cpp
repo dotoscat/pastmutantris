@@ -136,7 +136,7 @@ std::tuple<mutantris::Lines, int> mutantris::Panel::checkLines() {
             there_are_lines = true;
         }
     }
-    const auto number_of_lines = there_are_lines ? lines_i + 1 : 0;
+    const auto number_of_lines = there_are_lines ? lines_i : 0;
     return std::make_tuple(lines, number_of_lines);
 }
 

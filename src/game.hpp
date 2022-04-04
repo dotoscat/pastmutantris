@@ -8,6 +8,7 @@
 #include <allegro5/allegro_font.h>
 #include "event_manager.hpp"
 #include "current_piece.hpp"
+#include "abuse_negation.hpp"
 
 const float BLOCK_SIZE = 32.f;
 
@@ -47,6 +48,7 @@ class Game {
     CurrentPiece current_piece;
     NextPiece next_piece;
     double period_of_grace;
+    AbuseNegation abuse_negation;
 
     int points;
 

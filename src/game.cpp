@@ -25,6 +25,7 @@ Game::Game() {
     general_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 32, 0);
     points = 0;
     period_of_grace = 0.;
+    abuse_negation.set_capacity(5);
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
@@ -169,6 +170,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                     if (completed_lines > 0) {
                         event_manager.addLinesEvent(lines, completed_lines);
                     }
+                    abuse_negation.push_value(current_piece.getIndex());
                     addNextPiece(player_panel, next_piece_panel);
                 }
                 break;
@@ -176,7 +178,8 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
             {
                 const auto total_lines = game_event.lines.cleared;
                 std::cerr << "lines cleared: " << total_lines << std::endl;
-                points += total_lines*total_lines;
+                const auto temp_points = total_lines*total_lines;
+                points += abuse_negation.punish(temp_points, current_piece.getIndex());
             }
                 game_panel.clearLines();
                 break;

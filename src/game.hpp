@@ -9,6 +9,7 @@
 #include "event_manager.hpp"
 #include "current_piece.hpp"
 #include "abuse_negation.hpp"
+#include "timer.hpp"
 
 const float BLOCK_SIZE = 32.f;
 
@@ -54,6 +55,7 @@ class Game {
     NextPiece next_piece;
     double period_of_grace;
     AbuseNegation abuse_negation;
+    Timer timer;
 
     int points;
 

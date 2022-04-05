@@ -27,12 +27,14 @@ Game::Game() {
     period_of_grace = 0.;
     abuse_negation.set_capacity(5);
     status = Status::RUNNING;
+    timer.set(2, 0);
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
     al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(panel_tick));
+    al_register_event_source(event_queue, al_get_timer_event_source(timer.get_timer()));
 
 }
 
@@ -46,6 +48,7 @@ Game::~Game() {
 }
 
 void Game::run() {
+    const auto MAX_TIMER_STR = 8;
     const auto MAX_POINTS_STR = 16;
     const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
@@ -65,11 +68,13 @@ void Game::run() {
                                 al_map_rgba(128, 128, 128, 255));
 
     char points_str[MAX_POINTS_STR] = {0};
+    char timer_str[MAX_TIMER_STR] = {0};
 
     current_piece.randomize();
     addNextPiece(player_panel, next_piece_panel);
 
     al_start_timer(panel_tick);
+    timer.start();
     while (running == true) {
         input(running);
         process(game_panel, player_panel, next_piece_panel);
@@ -88,6 +93,10 @@ void Game::run() {
             al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "PAUSE");
         }
 
+        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+256.f+24.f, 0, "TIME");
+        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+256.f+32.f+24.f, 0,
+                     timer.string(timer_str, MAX_TIMER_STR));
+
         al_flip_display();
 
     }
@@ -105,8 +114,10 @@ void Game::input(bool &running) {
                 case ALLEGRO_KEY_ENTER:
                     if (status == Status::RUNNING) {
                         status = Status::PAUSE;
+                        timer.stop();
                     } else if (status == Status::PAUSE) {
                         status = Status::RUNNING;
+                        timer.resume();
                     }
                 }
             break;
@@ -160,6 +171,9 @@ void Game::running_input(ALLEGRO_EVENT &event) {
         case ALLEGRO_EVENT_TIMER:
             if (event.timer.source == panel_tick) {
                 event_manager.addEvent(Event::Type::GAME_TICK);
+            }
+            else if (event.timer.source == timer.get_timer()) {
+                timer.tick();
             }
             break;
     }

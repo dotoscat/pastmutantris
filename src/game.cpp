@@ -26,6 +26,7 @@ Game::Game() {
     points = 0;
     period_of_grace = 0.;
     abuse_negation.set_capacity(5);
+    status = Status::RUNNING;
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
@@ -80,8 +81,12 @@ void Game::run() {
         snprintf(points_str, MAX_POINTS_STR, "%d", points);
         al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+32.f+8.f, 0, static_cast<const char *>(points_str));
 
-        al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "NEXT");
-        next_piece_drawer.draw_single(next_piece_panel.getContent());
+        if (status == Status::RUNNING) {
+            al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "NEXT");
+            next_piece_drawer.draw_single(next_piece_panel.getContent());
+        } else if (status == Status::PAUSE){
+            al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "PAUSE");
+        }
 
         al_flip_display();
 
@@ -97,49 +102,66 @@ void Game::input(bool &running) {
                 case ALLEGRO_KEY_ESCAPE:
                     running = false;
                     break;
-                case ALLEGRO_KEY_A:
-                    event_manager.addMoveEvent(Event::Move::LEFT);
-                    break;
-                case ALLEGRO_KEY_D:
-                    event_manager.addMoveEvent(Event::Move::RIGHT);
-                    break;
-                case ALLEGRO_KEY_S:
-                    event_manager.addEvent(Event::Type::PIECE_FAST_FALL);
-                    break;
-                case ALLEGRO_KEY_SPACE:
-                    event_manager.addEvent(Event::Type::PIECE_ROTATES);
-                    break;
-                case ALLEGRO_KEY_R:
-                    event_manager.addEvent(Event::Type::PIECE_MUTATES);
-                    break;
-                }
-            case ALLEGRO_EVENT_KEY_UP:
-                switch(event.keyboard.keycode) {
-                    case ALLEGRO_KEY_S:
-                        event_manager.addEvent(Event::Type::PIECE_NORMAL_FALL);
-                        break;
-                }
-            break;
-            case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-                if (event.mouse.button == 1) {
-                    event_manager.addEvent(Event::Type::PIECE_NEXT_MUTATION);
-                    std::cout << "1" << std::endl;
-                }
-                else if (event.mouse.button == 2) {
-                    event_manager.addEvent(Event::Type::PIECE_LAST_MUTATION);
-                    std::cout << "2" << std::endl;
+                case ALLEGRO_KEY_ENTER:
+                    if (status == Status::RUNNING) {
+                        status = Status::PAUSE;
+                    } else if (status == Status::PAUSE) {
+                        status = Status::RUNNING;
+                    }
                 }
             break;
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 running = false;
                 break;
-            case ALLEGRO_EVENT_TIMER:
-                if (event.timer.source == panel_tick) {
-                    event_manager.addEvent(Event::Type::GAME_TICK);
-                }
-                break;
         }
+        if (status == Status::RUNNING) {
+            running_input(event);
+        }
+    }
+}
 
+void Game::running_input(ALLEGRO_EVENT &event) {
+    switch (event.type) {
+        case ALLEGRO_EVENT_KEY_DOWN:
+            switch(event.keyboard.keycode) {
+            case ALLEGRO_KEY_A:
+                event_manager.addMoveEvent(Event::Move::LEFT);
+                break;
+            case ALLEGRO_KEY_D:
+                event_manager.addMoveEvent(Event::Move::RIGHT);
+                break;
+            case ALLEGRO_KEY_S:
+                event_manager.addEvent(Event::Type::PIECE_FAST_FALL);
+                break;
+            case ALLEGRO_KEY_SPACE:
+                event_manager.addEvent(Event::Type::PIECE_ROTATES);
+                break;
+            case ALLEGRO_KEY_R:
+                event_manager.addEvent(Event::Type::PIECE_MUTATES);
+                break;
+            }
+        case ALLEGRO_EVENT_KEY_UP:
+            switch(event.keyboard.keycode) {
+                case ALLEGRO_KEY_S:
+                    event_manager.addEvent(Event::Type::PIECE_NORMAL_FALL);
+                    break;
+            }
+        break;
+        case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+            if (event.mouse.button == 1) {
+                event_manager.addEvent(Event::Type::PIECE_NEXT_MUTATION);
+                std::cout << "1" << std::endl;
+            }
+            else if (event.mouse.button == 2) {
+                event_manager.addEvent(Event::Type::PIECE_LAST_MUTATION);
+                std::cout << "2" << std::endl;
+            }
+        break;
+        case ALLEGRO_EVENT_TIMER:
+            if (event.timer.source == panel_tick) {
+                event_manager.addEvent(Event::Type::GAME_TICK);
+            }
+            break;
     }
 }
 

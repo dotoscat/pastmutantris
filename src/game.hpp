@@ -36,6 +36,11 @@ struct NextPiece {
 
 class Game {
 
+    enum Status {
+       RUNNING,
+       PAUSE
+    } status;
+
     static constexpr double PERIOD_OF_GRACE = 1.;
     static constexpr double DEFAULT_SPEED = 1.;
     double current_speed;
@@ -53,6 +58,7 @@ class Game {
     int points;
 
     void input(bool &);
+    void running_input(ALLEGRO_EVENT &);
     void process(mutantris::Panel &, mutantris::Panel &, mutantris::Panel &);
     void addNextPiece(mutantris::Panel &, mutantris::Panel &);
 

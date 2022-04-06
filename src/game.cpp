@@ -301,7 +301,7 @@ void Game::addNextPiece(mutantris::Panel &player_panel, mutantris::Panel &next_p
 void Game::drawMainScreen() {
     static ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
     static const char *TITLE = "PASTMUTANTRIS";
-    static const char *AUTHOR = "Oscar Triano García @cat_dotoscat";
+    static const char *AUTHOR = "Oscar Triano García @cat_dotoscat 2022";
     static const char *HOW_TO_START = "Press 'Enter' to start.";
 
     static const int title_width = al_get_text_width(title_font, TITLE);
@@ -311,4 +311,5 @@ void Game::drawMainScreen() {
 
     al_draw_text(title_font, black, title_x, 8.f, 0, TITLE);
     al_draw_text(general_font, black, start_x, SCREEN_HEIGHT/2, 0, HOW_TO_START);
+    al_draw_text(small_font, black, 8.f, SCREEN_HEIGHT-32.f, 0, AUTHOR);
 }

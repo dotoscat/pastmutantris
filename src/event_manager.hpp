@@ -8,7 +8,6 @@
  * Events
  *
  * Game Over
- * Pause
  * Piece moves -> what piece
  * Piece mutates -> what piece
  * Piece rotates -> what piece
@@ -21,7 +20,6 @@
  */
 struct Event {
     enum Type{
-        PAUSE,
         GAME_OVER,
         GAME_TICK,
         PIECE_MOVES,

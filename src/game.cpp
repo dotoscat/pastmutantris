@@ -130,6 +130,11 @@ void Game::input(bool &running) {
                     } else if (status == Status::PAUSE) {
                         status = Status::RUNNING;
                         timer.resume();
+                    } else if (status == Status::MAIN_SCREEN) {
+                        //start game, move to method
+                        status = Status::RUNNING;
+                        timer.stop();
+                        timer.start();
                     }
                 }
             break;

@@ -11,6 +11,9 @@
 #include "abuse_negation.hpp"
 #include "timer.hpp"
 
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
 const float BLOCK_SIZE = 32.f;
 
 const int PANEL_WIDTH = 10;
@@ -38,6 +41,7 @@ struct NextPiece {
 class Game {
 
     enum Status {
+        MAIN_SCREEN,
        RUNNING,
        PAUSE
     } status;
@@ -49,6 +53,8 @@ class Game {
     ALLEGRO_EVENT_QUEUE *event_queue;
     ALLEGRO_TIMER *panel_tick;
     ALLEGRO_FONT *general_font;
+    ALLEGRO_FONT *title_font;
+    ALLEGRO_FONT *small_font;
     EventManager event_manager;
     Position piece_position;
     CurrentPiece current_piece;
@@ -63,6 +69,7 @@ class Game {
     void running_input(ALLEGRO_EVENT &);
     void process(mutantris::Panel &, mutantris::Panel &, mutantris::Panel &);
     void addNextPiece(mutantris::Panel &, mutantris::Panel &);
+    void drawMainScreen();
 
     public:
         Game();

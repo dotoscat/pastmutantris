@@ -18,15 +18,17 @@ void reset_timer(ALLEGRO_TIMER *timer) {
 }
 
 Game::Game() {
-    display = al_create_display(800, 600);
+    display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
     event_queue = al_create_event_queue();
     current_speed = DEFAULT_SPEED;
     panel_tick = al_create_timer(current_speed);
     general_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 32, 0);
+    title_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 64, 0);
+    small_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 16, 0);
     points = 0;
     period_of_grace = 0.;
     abuse_negation.set_capacity(5);
-    status = Status::RUNNING;
+    status = Status::MAIN_SCREEN;
     timer.set(2, 0);
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -45,6 +47,8 @@ Game::~Game() {
     al_destroy_event_queue(event_queue);
     al_destroy_display(display);
     al_destroy_font(general_font);
+    al_destroy_font(title_font);
+    al_destroy_font(small_font);
 }
 
 void Game::run() {
@@ -78,8 +82,17 @@ void Game::run() {
     while (running == true) {
         input(running);
         process(game_panel, player_panel, next_piece_panel);
+
         al_clear_to_color(bgcolor);
 
+        if (status == Status::MAIN_SCREEN) {
+            drawMainScreen();
+            al_flip_display();
+            al_rest(0.1);
+            continue;
+        }
+
+        // draw running and paused game
         panel_drawer.draw(game_panel.getContent(), player_panel.getContent());
         al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f, 0, "POINTS");
 
@@ -98,7 +111,6 @@ void Game::run() {
                      timer.string(timer_str, MAX_TIMER_STR));
 
         al_flip_display();
-
     }
 }
 
@@ -284,4 +296,19 @@ void Game::addNextPiece(mutantris::Panel &player_panel, mutantris::Panel &next_p
     next_piece.index = current_piece.randomize();
     next_piece.value = int1to(6);
     next_piece_panel.setPiece(2, 2, current_piece.getCurrentPiece(), next_piece_panel, next_piece.value);
+}
+
+void Game::drawMainScreen() {
+    static ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
+    static const char *TITLE = "PASTMUTANTRIS";
+    static const char *AUTHOR = "Oscar Triano García @cat_dotoscat";
+    static const char *HOW_TO_START = "Press 'Enter' to start.";
+
+    static const int title_width = al_get_text_width(title_font, TITLE);
+    static const float title_x = (SCREEN_WIDTH - title_width) / 2.f;
+    static const int start_width = al_get_text_width(general_font, HOW_TO_START);
+    static const float start_x = (SCREEN_WIDTH - start_width) / 2.f;
+
+    al_draw_text(title_font, black, title_x, 8.f, 0, TITLE);
+    al_draw_text(general_font, black, start_x, SCREEN_HEIGHT/2, 0, HOW_TO_START);
 }

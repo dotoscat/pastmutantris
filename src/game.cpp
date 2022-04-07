@@ -74,11 +74,6 @@ void Game::run() {
     char points_str[MAX_POINTS_STR] = {0};
     char timer_str[MAX_TIMER_STR] = {0};
 
-    current_piece.randomize();
-    addNextPiece(player_panel, next_piece_panel);
-
-    al_start_timer(panel_tick);
-    timer.start();
     while (running == true) {
         input(running);
         process(game_panel, player_panel, next_piece_panel);
@@ -117,6 +112,20 @@ void Game::run() {
     }
 }
 
+void Game::start() {
+    current_speed = DEFAULT_SPEED;
+    al_set_timer_speed(panel_tick, current_speed);
+    status = Status::RUNNING;
+    timer.stop();
+    timer.set(2, 0);
+    timer.start();
+    points = 0;
+    abuse_negation.clear();
+    current_piece.randomize();
+    reset_timer(panel_tick);
+    event_manager.addEvent(Event::Type::START_GAME);
+}
+
 void Game::input(bool &running) {
     ALLEGRO_EVENT event;
     while(al_get_next_event(event_queue, &event) == true) {
@@ -134,10 +143,7 @@ void Game::input(bool &running) {
                         status = Status::RUNNING;
                         timer.resume();
                     } else if (status == Status::MAIN_SCREEN) {
-                        //start game, move to method
-                        status = Status::RUNNING;
-                        timer.stop();
-                        timer.start();
+                        start();
                     } else if (status == Status::GAME_OVER) {
                         status = Status::MAIN_SCREEN;
                     }
@@ -196,6 +202,9 @@ void Game::running_input(ALLEGRO_EVENT &event) {
             }
             else if (event.timer.source == timer.get_timer()) {
                 timer.tick();
+                if (timer.finished()) {
+                    event_manager.addEvent(Event::Type::GAME_OVER);
+                }
             }
             break;
     }
@@ -208,6 +217,10 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
     while(event_manager.nextEvent(game_event)) {
         std::cout << "game event type: " << game_event.type << std::endl;
         switch(game_event.type) {
+            case Event::Type::START_GAME:
+                game_panel.clear();
+                addNextPiece(player_panel, next_piece_panel);
+                break;
             case Event::Type::GAME_TICK:
             if (period_of_grace > 0.) {
                 period_of_grace -= current_speed;
@@ -297,6 +310,8 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 break;
             case Event::Type::GAME_OVER:
                 status = Status::GAME_OVER;
+                timer.stop();
+                al_stop_timer(panel_tick);
                 break;
         }
     }

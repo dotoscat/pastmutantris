@@ -66,6 +66,7 @@ class Game {
 
     int points;
 
+    void start();
     void input(bool &);
     void running_input(ALLEGRO_EVENT &);
     void process(mutantris::Panel &, mutantris::Panel &, mutantris::Panel &);

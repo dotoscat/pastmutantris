@@ -20,6 +20,7 @@
  */
 struct Event {
     enum Type{
+        START_GAME,
         GAME_OVER,
         GAME_TICK,
         PIECE_MOVES,

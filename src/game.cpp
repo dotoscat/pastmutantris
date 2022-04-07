@@ -104,6 +104,9 @@ void Game::run() {
             next_piece_drawer.draw_single(next_piece_panel.getContent());
         } else if (status == Status::PAUSE){
             al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "PAUSE");
+        } else if (status == Status::GAME_OVER) {
+            al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+24.f, 0, "GAME OVER!!");
+            al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+64.f+32.f+24.f, 0, "Press 'Enter'");
         }
 
         al_draw_text(general_font, black, POINTS_STR_POS_X, 8.f+256.f+24.f, 0, "TIME");
@@ -135,6 +138,8 @@ void Game::input(bool &running) {
                         status = Status::RUNNING;
                         timer.stop();
                         timer.start();
+                    } else if (status == Status::GAME_OVER) {
+                        status = Status::MAIN_SCREEN;
                     }
                 }
             break;
@@ -226,6 +231,9 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                     abuse_negation.push_value(current_piece.getIndex());
                     addNextPiece(player_panel, next_piece_panel);
                 }
+                if (player_panel.move(0, 0, game_panel) == false) {
+                    event_manager.addEvent(Event::Type::GAME_OVER);
+                }
                 break;
             case Event::Type::CLEAR_LINES:
             {
@@ -286,6 +294,9 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
             case Event::Type::PIECE_NORMAL_FALL:
                 al_set_timer_speed(panel_tick, current_speed);
                 reset_timer(panel_tick);
+                break;
+            case Event::Type::GAME_OVER:
+                status = Status::GAME_OVER;
                 break;
         }
     }

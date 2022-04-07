@@ -43,7 +43,8 @@ class Game {
     enum Status {
         MAIN_SCREEN,
        RUNNING,
-       PAUSE
+       PAUSE,
+       GAME_OVER
     } status;
 
     static constexpr double PERIOD_OF_GRACE = 1.;

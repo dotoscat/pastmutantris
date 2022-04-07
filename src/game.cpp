@@ -318,7 +318,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
 }
 
 void Game::addNextPiece(mutantris::Panel &player_panel, mutantris::Panel &next_piece_panel) {
-    auto piece = current_piece.getCurrentPiece();
+    auto piece = CurrentPiece::PIECES[next_piece.index];
     piece_position.x = PANEL_WIDTH / 2;
     piece_position.y = 2;
     const auto value = next_piece.value > 0 ? next_piece.value : int1to(6);

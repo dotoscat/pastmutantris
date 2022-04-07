@@ -6,6 +6,9 @@
 
 class CurrentPiece {
     static constexpr auto TOTAL_PIECES = 7;
+    int current_piece;
+
+public:
     static constexpr std::array<mutantris::Piece, TOTAL_PIECES> PIECES = {
         mutantris::I,
         mutantris::O,
@@ -16,7 +19,6 @@ class CurrentPiece {
         mutantris::Z,
     };
 
-    int current_piece;
 
 public:
     CurrentPiece() : current_piece(0) {};

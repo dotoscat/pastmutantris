@@ -25,6 +25,9 @@ Game::Game() {
     general_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 32, 0);
     title_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 64, 0);
     small_font = al_load_ttf_font("assets/RedHatMono-VariableFont_wght.ttf", 16, 0);
+    samples["drop"] = al_load_sample("assets/drop.wav");
+    samples["select"] = al_load_sample("assets/select.wav");
+    samples["clear"] = al_load_sample("assets/clear.wav");
     points = 0;
     period_of_grace = 0.;
     abuse_negation.set_capacity(5);
@@ -42,6 +45,11 @@ Game::Game() {
 
 Game::~Game() {
     std::cout << "Destruction!" << std::endl;
+
+    for (const auto& [key, sample] : samples) {
+        std::cerr << "destroy " << key << std::endl;
+        al_destroy_sample(sample);
+    }
 
     al_destroy_timer(panel_tick);
     al_destroy_event_queue(event_queue);
@@ -212,6 +220,9 @@ void Game::running_input(ALLEGRO_EVENT &event) {
 
 void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                    mutantris::Panel &next_piece_panel) {
+    #ifndef M_PI
+        #define M_PI 3.141596
+    #endif
     static const int angle = 90*M_PI/180;
     Event game_event;
     while(event_manager.nextEvent(game_event)) {
@@ -243,9 +254,14 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                     }
                     abuse_negation.push_value(current_piece.getIndex());
                     addNextPiece(player_panel, next_piece_panel);
-                }
-                if (player_panel.move(0, 0, game_panel) == false) {
-                    event_manager.addEvent(Event::Type::GAME_OVER);
+                    auto is_game_over = !player_panel.move(0, 0, game_panel);
+                    if (is_game_over) {
+                        event_manager.addEvent(Event::Type::GAME_OVER);
+                        break;
+                    }
+                    if (completed_lines == 0) {
+                        playSample("drop");
+                    }
                 }
                 break;
             case Event::Type::CLEAR_LINES:
@@ -256,6 +272,7 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 points += abuse_negation.punish(temp_points, current_piece.getIndex());
             }
                 game_panel.clearLines();
+                playSample("clear");
                 break;
             case Event::Type::PIECE_MOVES:
                 if (period_of_grace > 0.) {
@@ -343,4 +360,13 @@ void Game::drawMainScreen() {
     al_draw_text(title_font, black, title_x, 8.f, 0, TITLE);
     al_draw_text(general_font, black, start_x, SCREEN_HEIGHT/2, 0, HOW_TO_START);
     al_draw_text(small_font, black, 8.f, SCREEN_HEIGHT-32.f, 0, AUTHOR);
+}
+
+
+void Game::playSample(const char *key) {
+    auto found = samples.find(key);
+    if (found == samples.end()) {
+        return;
+    }
+    al_play_sample(found->second, 1.0, ALLEGRO_AUDIO_PAN_NONE, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
 }

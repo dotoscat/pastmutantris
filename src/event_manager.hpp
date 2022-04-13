@@ -23,6 +23,7 @@ struct Event {
         START_GAME,
         GAME_OVER,
         GAME_TICK,
+        INCREASE_SPEED,
         PIECE_MOVES,
         PIECE_FAST_FALL,
         PIECE_NORMAL_FALL,

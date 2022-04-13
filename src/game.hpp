@@ -52,14 +52,16 @@ class Game {
 
     static constexpr double PERIOD_OF_GRACE = 1.;
     static constexpr double DEFAULT_SPEED = 1.;
-    std::map<const char *, ALLEGRO_SAMPLE *> samples;
+    static constexpr double INCREASE_SPEED_MAX_TIME = 28.;
     double current_speed;
+    double current_speed_increase_time;
     ALLEGRO_DISPLAY *display;
     ALLEGRO_EVENT_QUEUE *event_queue;
     ALLEGRO_TIMER *panel_tick;
     ALLEGRO_FONT *general_font;
     ALLEGRO_FONT *title_font;
     ALLEGRO_FONT *small_font;
+    std::map<const char *, ALLEGRO_SAMPLE *> samples;
     EventManager event_manager;
     Position piece_position;
     CurrentPiece current_piece;

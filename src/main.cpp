@@ -19,9 +19,6 @@ int main(int argn, char* argv[]) {
     al_init_ttf_addon();
     al_init_primitives_addon();
     al_reserve_samples(4);
-    // ALLEGRO_SAMPLE *sample = al_load_sample("assets/drop.wav");
-    // bool valid = al_play_sample(sample, 1.0, ALLEGRO_AUDIO_PAN_NONE, 1.0, ALLEGRO_PLAYMODE_ONCE, &id);
-    // al_destroy_sample(sample);
     Game game;
     game.run();
 }

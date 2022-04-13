@@ -6,7 +6,7 @@ clean-main-mingw:
 	rm main-mingw
 
 main-mingw:
-	g++ -std=c++17 $(SRC) -O2 -o main-mingw $(ALLEGRO5)
+	g++ -std=c++17 $(SRC) -mwindows -O2 -o main-mingw $(ALLEGRO5)
 
 main-linux:
 	g++ -std=c++17 $(SRC) -O2 -o main-linux $(ALLEGRO5)

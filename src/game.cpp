@@ -40,7 +40,6 @@ Game::Game() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(panel_tick));
     al_register_event_source(event_queue, al_get_timer_event_source(timer.get_timer()));
-
 }
 
 Game::~Game() {
@@ -122,6 +121,7 @@ void Game::run() {
 
 void Game::start() {
     current_speed = DEFAULT_SPEED;
+    current_speed_increase_time = 0.;
     al_set_timer_speed(panel_tick, current_speed);
     status = Status::RUNNING;
     timer.stop();
@@ -210,8 +210,13 @@ void Game::running_input(ALLEGRO_EVENT &event) {
             }
             else if (event.timer.source == timer.get_timer()) {
                 timer.tick();
+                current_speed_increase_time += 1.;
                 if (timer.finished()) {
                     event_manager.addEvent(Event::Type::GAME_OVER);
+                }
+                else if (current_speed_increase_time >= INCREASE_SPEED_MAX_TIME) {
+                    current_speed_increase_time = 0.;
+                    event_manager.addEvent(Event::Type::INCREASE_SPEED);
                 }
             }
             break;
@@ -329,6 +334,15 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 status = Status::GAME_OVER;
                 timer.stop();
                 al_stop_timer(panel_tick);
+                break;
+            case Event::Type::INCREASE_SPEED:
+            {
+                const bool is_dropping = current_speed != al_get_timer_speed(panel_tick);
+                current_speed /= 1.5;
+                if (is_dropping == false) {
+                    al_set_timer_speed(panel_tick, current_speed);
+                }
+            }
                 break;
         }
     }

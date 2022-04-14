@@ -1,6 +1,7 @@
 #ifndef _GAME_HPP_
 #define _GAME_HPP_
 
+#include <array>
 #include <map>
 #include <cstdlib>
 #include <cmath>
@@ -50,6 +51,7 @@ class Game {
        GAME_OVER
     } status;
 
+    static constexpr auto MAX_POINTS_STR = 16;
     static constexpr double PERIOD_OF_GRACE = 1.;
     static constexpr double DEFAULT_SPEED = 1.;
     static constexpr double INCREASE_SPEED_MAX_TIME = 28.;
@@ -72,6 +74,9 @@ class Game {
 
     int points;
 
+    static constexpr size_t MAX_SCORE_LIST = 3;
+    std::array<int, MAX_SCORE_LIST> score_list;
+
     void start();
     void input(bool &);
     void running_input(ALLEGRO_EVENT &);
@@ -79,6 +84,8 @@ class Game {
     void addNextPiece(mutantris::Panel &, mutantris::Panel &);
     void drawMainScreen();
     void playSample(const char *);
+    ALLEGRO_FILE *openScoreList(const char *);
+    void loadScoreList();
 
     public:
         Game();

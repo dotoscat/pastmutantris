@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <map>
+#include <cstring>
 #include "game.hpp"
 #include "mutantris.hpp"
 #include "current_piece.hpp"
@@ -33,7 +34,10 @@ Game::Game() {
     abuse_negation.set_capacity(5);
     status = Status::MAIN_SCREEN;
     timer.set(2, 0);
+    score_list.fill(0);
 
+    loadScoreList();
+//
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_joystick_event_source());
     al_register_event_source(event_queue, al_get_mouse_event_source());
@@ -60,7 +64,6 @@ Game::~Game() {
 
 void Game::run() {
     const auto MAX_TIMER_STR = 8;
-    const auto MAX_POINTS_STR = 16;
     const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
     ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
@@ -383,4 +386,42 @@ void Game::playSample(const char *key) {
         return;
     }
     al_play_sample(found->second, 1.0, ALLEGRO_AUDIO_PAN_NONE, 1.0, ALLEGRO_PLAYMODE_ONCE, nullptr);
+}
+
+ALLEGRO_FILE *Game::openScoreList(const char *mode) {
+
+}
+
+void Game::loadScoreList() {
+    static const char *FILENAME = "mutantris_score.list";
+    auto user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
+    auto filename_path = al_create_path(FILENAME);
+
+    al_rebase_path(user_data_path, filename_path);
+    auto score_path = al_path_cstr(filename_path, ALLEGRO_NATIVE_PATH_SEP);
+    auto file = al_fopen(score_path, "wb");
+    if (file != nullptr) {
+        char buffer[MAX_POINTS_STR] = {0};
+        char final_buffer[MAX_POINTS_STR] = {0};
+
+        for(int i = 0; al_feof(file) != true || i < MAX_SCORE_LIST; i++) {
+            auto line = al_fgets(file, buffer, MAX_POINTS_STR);
+            if (line == nullptr && al_ferror(file)) {
+                std::cerr << "Error reading score list: " << al_ferrmsg(file) << std::endl;
+                break;
+            }
+
+            auto len = std::strlen(line);
+            std::strncpy(final_buffer, buffer, len-1); //len - '\n'
+            int points = std::atoi(final_buffer);
+            score_list[i] = points;
+
+            std::cerr << "read points" << points << std::endl;
+        }
+
+        al_fclose(file);
+    }
+    std::cerr << "scores stored at: " << score_path << std::endl;
+    al_destroy_path(user_data_path);
+    al_destroy_path(filename_path);
 }

@@ -9,6 +9,7 @@
 
 int main(int argn, char* argv[]) {
     std::cout << "Starting this" << std::endl;
+    al_set_app_name("pastmutantris");
     al_init();
     al_install_audio();
     al_init_acodec_addon();

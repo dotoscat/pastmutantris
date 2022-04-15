@@ -64,13 +64,14 @@ Game::~Game() {
 
 void Game::run() {
     const auto MAX_TIMER_STR = 8;
-    const auto POINTS_STR_POS_X = 64.f+TOTAL_WIDTH+8.f;
+    const auto PANEL_POS_X = (SCREEN_WIDTH-TOTAL_WIDTH)/4;
+    const auto POINTS_STR_POS_X = PANEL_POS_X+TOTAL_WIDTH+8.f;
     ALLEGRO_COLOR bgcolor = al_map_rgba(245, 245, 245, 0);
     ALLEGRO_COLOR black = al_map_rgba(0, 0, 0, 255);
     bool running = true;
     mutantris::Panel game_panel(PANEL_WIDTH, PANEL_HEIGHT);
     mutantris::Panel player_panel(PANEL_WIDTH, PANEL_HEIGHT);
-    PanelDrawer panel_drawer(64.f, 8.f, 10, 18, 32.f,
+    PanelDrawer panel_drawer(PANEL_POS_X, 8.f, 10, 18, 32.f,
                              al_map_rgba(0, 0, 0, 128),
                              al_map_rgba(255, 255, 255, 255),
                              al_map_rgba(128, 128, 128, 255));

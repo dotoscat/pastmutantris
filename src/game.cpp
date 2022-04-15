@@ -399,6 +399,7 @@ void Game::playSample(const char *key) {
 ALLEGRO_FILE *Game::openScoreList(const char *mode) {
     static const char *FILENAME = "mutantris_score.list";
     auto user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
+    al_make_directory(al_path_cstr(user_data_path, ALLEGRO_NATIVE_PATH_SEP));
     auto filename_path = al_create_path(FILENAME);
 
     al_rebase_path(user_data_path, filename_path);

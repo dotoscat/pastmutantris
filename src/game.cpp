@@ -389,39 +389,54 @@ void Game::playSample(const char *key) {
 }
 
 ALLEGRO_FILE *Game::openScoreList(const char *mode) {
-
-}
-
-void Game::loadScoreList() {
     static const char *FILENAME = "mutantris_score.list";
     auto user_data_path = al_get_standard_path(ALLEGRO_USER_DATA_PATH);
     auto filename_path = al_create_path(FILENAME);
 
     al_rebase_path(user_data_path, filename_path);
     auto score_path = al_path_cstr(filename_path, ALLEGRO_NATIVE_PATH_SEP);
-    auto file = al_fopen(score_path, "wb");
-    if (file != nullptr) {
-        char buffer[MAX_POINTS_STR] = {0};
-        char final_buffer[MAX_POINTS_STR] = {0};
-
-        for(int i = 0; al_feof(file) != true || i < MAX_SCORE_LIST; i++) {
-            auto line = al_fgets(file, buffer, MAX_POINTS_STR);
-            if (line == nullptr && al_ferror(file)) {
-                std::cerr << "Error reading score list: " << al_ferrmsg(file) << std::endl;
-                break;
-            }
-
-            auto len = std::strlen(line);
-            std::strncpy(final_buffer, buffer, len-1); //len - '\n'
-            int points = std::atoi(final_buffer);
-            score_list[i] = points;
-
-            std::cerr << "read points" << points << std::endl;
-        }
-
-        al_fclose(file);
-    }
     std::cerr << "scores stored at: " << score_path << std::endl;
+    ALLEGRO_FILE *file = al_fopen(score_path, mode);
     al_destroy_path(user_data_path);
     al_destroy_path(filename_path);
+    return file;
+}
+
+void Game::loadScoreList() {
+    auto file = openScoreList("rb");
+    if (file == nullptr) {
+        std::cerr << "score list file does not exist (which is fine at first)" << std::endl;
+        return;
+    }
+    char buffer[MAX_POINTS_STR] = {0};
+    char final_buffer[MAX_POINTS_STR] = {0};
+
+    for(int i = 0; al_feof(file) != true && i < MAX_SCORE_LIST; i++) {
+        auto line = al_fgets(file, buffer, MAX_POINTS_STR);
+        if (line == nullptr && al_ferror(file)) {
+            std::cerr << "Error reading score list: " << al_ferrmsg(file) << std::endl;
+            break;
+        }
+
+        auto len = std::strlen(line);
+        std::strncpy(final_buffer, buffer, len-1); //len - '\n'
+        int points = std::atoi(final_buffer);
+        score_list[i] = points;
+
+        std::cerr << "read points" << points << std::endl;
+    }
+
+    al_fclose(file);
+}
+
+void Game::writeScoreList() {
+    auto file = openScoreList("wb");
+    if (file == nullptr) {
+        std::cerr << "Error writing score list" << std::endl;
+        return;
+    }
+    for (int points : score_list) {
+        al_fprintf(file, "%i\n", points);
+    }
+    al_fclose(file);
 }

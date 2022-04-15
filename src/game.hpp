@@ -86,6 +86,7 @@ class Game {
     void playSample(const char *);
     ALLEGRO_FILE *openScoreList(const char *);
     void loadScoreList();
+    void writeScoreList();
 
     public:
         Game();

@@ -418,10 +418,10 @@ void Game::loadScoreList() {
         std::cerr << "score list file does not exist (which is fine at first)" << std::endl;
         return;
     }
-    char buffer[MAX_POINTS_STR] = {0};
-    char final_buffer[MAX_POINTS_STR] = {0};
 
     for(int i = 0; al_feof(file) != true && i < MAX_SCORE_LIST; i++) {
+        char buffer[MAX_POINTS_STR] = {0};
+        char final_buffer[MAX_POINTS_STR] = {0};
         auto line = al_fgets(file, buffer, MAX_POINTS_STR);
         if (line == nullptr && al_ferror(file)) {
             std::cerr << "Error reading score list: " << al_ferrmsg(file) << std::endl;

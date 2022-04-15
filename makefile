@@ -2,7 +2,7 @@ ALLEGRO5 = `pkg-config allegro-5 allegro_ttf-5 allegro_font-5 allegro_primitives
 
 SRC = src/*.cpp
 
-clean-main-mingw:
+clean-mingw:
 	rm main-mingw
 
 main-mingw:

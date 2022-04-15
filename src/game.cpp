@@ -337,6 +337,8 @@ void Game::process(mutantris::Panel &game_panel, mutantris::Panel &player_panel,
                 status = Status::GAME_OVER;
                 timer.stop();
                 al_stop_timer(panel_tick);
+                storeScoreInList();
+                writeScoreList();
                 break;
             case Event::Type::INCREASE_SPEED:
             {
@@ -373,6 +375,12 @@ void Game::drawMainScreen() {
     static const float title_x = (SCREEN_WIDTH - title_width) / 2.f;
     static const int start_width = al_get_text_width(general_font, HOW_TO_START);
     static const float start_x = (SCREEN_WIDTH - start_width) / 2.f;
+
+    for (int i = 0; i < score_list.size(); i++) {
+        al_draw_textf(general_font, black,
+                      SCREEN_WIDTH/4, 92.f+32.f*i,
+                      0, "%d - %d", i+1, score_list[i]);
+    }
 
     al_draw_text(title_font, black, title_x, 8.f, 0, TITLE);
     al_draw_text(general_font, black, start_x, SCREEN_HEIGHT/2, 0, HOW_TO_START);
@@ -439,4 +447,20 @@ void Game::writeScoreList() {
         al_fprintf(file, "%i\n", points);
     }
     al_fclose(file);
+}
+
+void Game::storeScoreInList() {
+    int i = 0;
+    for(; i < score_list.size(); i++) {
+        if (points > score_list[i]) {
+            for(int ri = score_list.size()-1; ri > i; ri--) {
+                if (ri <= 0) {
+                    break;
+                }
+                score_list[ri] = score_list[ri-1];
+            }
+            score_list[i] = points;
+            break;
+        }
+    }
 }

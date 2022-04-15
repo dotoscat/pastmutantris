@@ -74,7 +74,7 @@ class Game {
 
     int points;
 
-    static constexpr size_t MAX_SCORE_LIST = 3;
+    static constexpr size_t MAX_SCORE_LIST = 5;
     std::array<int, MAX_SCORE_LIST> score_list;
 
     void start();
@@ -87,6 +87,7 @@ class Game {
     ALLEGRO_FILE *openScoreList(const char *);
     void loadScoreList();
     void writeScoreList();
+    void storeScoreInList();
 
     public:
         Game();

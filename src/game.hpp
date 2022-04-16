@@ -31,7 +31,7 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define VERSION "v1.0.0"
+#define VERSION "v1.0.1"
 
 const float BLOCK_SIZE = 32.f;
 

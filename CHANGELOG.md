@@ -13,3 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Control by keyboard and mouse.
     - 800x600 windowed resolution.
     - Load and save scores.
+
+## Unreleased
+### Removed
+    - Purplege files

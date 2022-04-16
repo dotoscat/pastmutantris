@@ -1,15 +1,3 @@
-#ifndef _GAME_HPP_
-#define _GAME_HPP_
-
-#include <array>
-#include <map>
-#include <cstdlib>
-#include <cmath>
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_ttf.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_audio.h>
-#include <allegro5/allegro_acodec.h>
 // Copyright 2022 Oscar Triano García
 //
 //    Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +12,18 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+#ifndef _GAME_HPP_
+#define _GAME_HPP_
+
+#include <array>
+#include <map>
+#include <cstdlib>
+#include <cmath>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include "event_manager.hpp"
 #include "current_piece.hpp"
 #include "abuse_negation.hpp"

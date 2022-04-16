@@ -391,6 +391,8 @@ void Game::drawMainScreen() {
     static const int start_width = al_get_text_width(general_font, HOW_TO_START);
     static const float start_x = (SCREEN_WIDTH - start_width) / 2.f;
 
+    static const float version_width = al_get_text_width(small_font, VERSION);
+
     for (int i = 0; i < score_list.size(); i++) {
         al_draw_textf(general_font, black,
                       SCREEN_WIDTH/4, 92.f+32.f*i,
@@ -400,6 +402,8 @@ void Game::drawMainScreen() {
     al_draw_text(title_font, black, title_x, 8.f, 0, TITLE);
     al_draw_text(general_font, black, start_x, SCREEN_HEIGHT/2, 0, HOW_TO_START);
     al_draw_text(small_font, black, 8.f, SCREEN_HEIGHT-32.f, 0, AUTHOR);
+
+    al_draw_text(small_font, black, SCREEN_WIDTH-version_width-8.f, SCREEN_HEIGHT-32.f, 0, VERSION);
 }
 
 
